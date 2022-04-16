@@ -295,3 +295,21 @@ class all_transformer_levy(ListView):
                 )
 
             return queryset
+
+
+def check_service_charge(request):
+    sv_count = ServiceChargePayments.objects.all()
+
+    if len(sv_count) == 0:
+        return render(request, 'financials/all/no_sc.html')
+    else:
+        return HttpResponseRedirect('financials:all_service_charge')
+
+
+def check_transformer_levy(request):
+    tl_count = TransformerLevyPayments.objects.all()
+
+    if len(tl_count) == 0:
+        return render(request, 'financials/all/no_tl.html')
+    else:
+        return HttpResponseRedirect('financials:all_transformer_levy')
