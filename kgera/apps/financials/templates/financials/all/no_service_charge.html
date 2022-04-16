@@ -1,0 +1,23 @@
+{% extends 'financials/layouts/allbase.html' %}
+{% load my_tags %}
+{% block title %}Service Charge Payments{% endblock title %}
+
+{% block card1 %}
+<div class="col-xl-12 col-md-12">
+
+</div>
+{% endblock card1 %}
+{% block card2 %}
+  <div class="col-xl-12 col-md-12">
+    <div class="card">
+      <div class="card-header">
+
+      </div>
+      <div class="card-block">
+        <h2 class="text-center text-custom">{{ info }}</h2>
+        <a href="{% url 'residents:select_house' %}" class="btn btn-grd-primary btn-round waves-effect waves-light">
+          Register New Resident</a>
+      </div>
+  </div>
+</div>
+{% endblock card2 %}

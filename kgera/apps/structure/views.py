@@ -118,6 +118,8 @@ def commtype_dashboard(request):
 
             if CommunityType.objects.filter(commtype=commtype).exists():
                 messages.error(request, f'Community Type - {commtype} Already Exists.')
+            elif CommunityType.objects.filter(housetype=housetype).exists():
+                messages.error(request, f'Cannot attach more than one community to a house type.')
             else:
                 ht = CommunityType.objects.create(housetype=housetype, commtype=commtype, description=description)
                 ht.save()
@@ -181,7 +183,7 @@ def communities_dashboard(request):
             # Generate Community Code
 
             if Community.objects.filter(commcode=commcode).exists():
-                messages.success(request, f'Community - {commcode} Already Exists.')
+                messages.error(request, f'Community - {commcode} Already Exists.')
             else:
                 ht = Community.objects.create(communitytype=communitytype, commnum=commnum, commcode=commcode)
                 ht.save()
