@@ -2,104 +2,127 @@
 
 {% block title %}All Residents{% endblock title %}
 
-{% block card1 %}
-<div class="col-xl-12 col-md-12">
-    <div class="card">
-        {% if messages %}
-            {% for message in messages %}
-                <h5 class="text-center {{ messages.tags }} animate__animated animate__fadeIn animate__delay-3s">{{ message }}</h5>
-            {% endfor %}
-        {% endif %}
+{% if residents %}
+  {% block card1 %}
+  <div class="col-xl-12 col-md-12">
+      <div class="card">
+          {% if messages %}
+              {% for message in messages %}
+                  <h5 class="text-center {{ messages.tags }} animate__animated animate__fadeIn animate__delay-3s">{{ message }}</h5>
+              {% endfor %}
+          {% endif %}
+          <div class="card-header">
+              <h5>Search Community/House Code OR Resident Code/Resident Name</h5>
+          </div>
+          <div class="card-block">
+              <div class="row">
+                <div class="col-lg-12 col-xl-1"></div>
+                <div class="col-lg-12 col-xl-10">
+                  <form class="form-material" action="{% url 'residents:all_residents' %}" method="get">
+                    <div class="form-group row form-primary form-static-label">
+                      <div class="col">
+                        <input type="text" name="q1" class="form-control" placeholder="Search Community or House Code">
+                        <span class="form-bar"></span>
+                        <label class="float-label"><i class="fa fa-search m-r-10"></i>Search</label>
+                      </div>
+                        <div class="col">
+                        <input type="text" name="q2" class="form-control" placeholder="Search Resident Code or Resident Name">
+                        <span class="form-bar"></span>
+                        <label class="float-label"><i class="fa fa-search m-r-10"></i>Search</label>
+                        </div>
+                    </div>
+                    <center><button class="btn btn-grd-primary btn-round waves-effect waves-light" type="submit">Search</button></center>
+                  </form>
+                </div>
+            </div>
+          </div>
+      </div>
+  </div>
+  {% endblock card1 %}
+  {% block card2 %}
+    <div class="col-xl-12 col-md-12">
+      <div class="card table-card">
         <div class="card-header">
-            <h5>Search Community/House Code OR Resident Code/Resident Name</h5>
+          <h5>Results</h5>
+          <div class="card-header-right">
+              <a href="{% url 'residents:residents_dashboard' %}" class="b-b-primary text-primary">Go Back</a>
+          </div>
         </div>
         <div class="card-block">
-            <div class="row">
-              <div class="col-lg-12 col-xl-1"></div>
-              <div class="col-lg-12 col-xl-10">
-                <form class="form-material" action="{% url 'residents:all_residents' %}" method="get">
-                  <div class="form-group row form-primary form-static-label">
-                    <div class="col">
-                      <input type="text" name="q1" class="form-control" placeholder="Search Community or House Code">
-                      <span class="form-bar"></span>
-                      <label class="float-label"><i class="fa fa-search m-r-10"></i>Search</label>
-                    </div>
-                      <div class="col">
-                      <input type="text" name="q2" class="form-control" placeholder="Search Resident Code or Resident Name">
-                      <span class="form-bar"></span>
-                      <label class="float-label"><i class="fa fa-search m-r-10"></i>Search</label>
-                      </div>
-                  </div>
-                  <center><button class="btn btn-grd-primary btn-round waves-effect waves-light" type="submit">Search</button></center>
-                </form>
-              </div>
-          </div>
-        </div>
-    </div>
-</div>
-{% endblock card1 %}
-{% block card2 %}
-  <div class="col-xl-12 col-md-12">
-    <div class="card table-card">
-      <div class="card-header">
-        <h5>Results</h5>
-        <div class="card-header-right">
-            <a href="{% url 'residents:residents_dashboard' %}" class="b-b-primary text-primary">Go Back</a>
-        </div>
-      </div>
-      <div class="card-block">
-        <div class="table-responsive">
-          <table class="table table-hover">
-              <thead>
-                <tr>
-                <th>House</th>
-                <th>Resident Code</th>
-                <th>Full Name</th>
-                <th>Email</th>
-                <th>Start of Occupancy</th>
-                </tr>
-            </thead>
-              <tbody>
-                  {% for resident in residents %}
-                <tr>
-                  <td>{{ resident.house }}</td>
-                  <td>{{ resident.resident_code }}</td>
-                  <td>{{ resident.last_name }} {{ resident.first_name }}</td>
-                  <td>{{ resident.resident_email }}</td>
-                  <td>{{ resident.occupancy_start }}</td>
-                  <td><a href="{% url 'residents:resident_details' resident.id %}" class="b-b-primary text-primary">View Resident Details</a></td>
-                </tr>
-                  {% endfor %}
-              </tbody>
-          </table>
-          <div class="text-right m-r-20">
-            {% if is_paginated %}
+          <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                  <tr>
+                  <th>House</th>
+                  <th>Resident Code</th>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Start of Occupancy</th>
+                  </tr>
+              </thead>
+                <tbody>
+                    {% for resident in residents %}
+                  <tr>
+                    <td>{{ resident.house }}</td>
+                    <td>{{ resident.resident_code }}</td>
+                    <td>{{ resident.last_name }} {{ resident.first_name }}</td>
+                    <td>{{ resident.resident_email }}</td>
+                    <td>{{ resident.occupancy_start }}</td>
+                    <td><a href="{% url 'residents:resident_details' resident.id %}" class="b-b-primary text-primary">
+                      View Resident Details</a></td>
+                  </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="text-right m-r-20">
+              {% if is_paginated %}
 
-              {% if page_obj.has_previous %}
-                  <a class="badge badge-inverse-primary" href="{% url 'residents:all_residents' %}?q1={{searchq1}}&q2={{searchq2}}&page=1"
-                     data-toggle="tooltip" data-placement="top" data-trigger="hover" title="First Page">First</a>
-                  <a class="badge badge-inverse-primary" href="{% url 'residents:select_house' %}?q1={{searchq1}}&q2={{searchq2}}&page= {{page_obj.previous_page_number}}"
-                     data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Previous Page">Previous</a>
-              {% endif %}
-
-              {% for num in page_obj.paginator.page_range %}
-                {% if page_obj.number == num %}
-                  <a class="badge badge-primary" style="color: white !important;" href="{% url 'residents:all_residents' %}?q1={{searchq1}}&q2={{searchq2}}&page={{ num }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Page {{ num }}">{{ num }}</a>
-                {% elif num > page_obj.number|add:'-4' and num < page_obj.number|add:'4' %}
-                  <a class="badge badge-inverse-primary" href="{% url 'residents:all_residents' %}?q1={{searchq1}}&q2={{searchq2}}&page={{ num }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Page {{ num }}">{{ num }}</a>
+                {% if page_obj.has_previous %}
+                    <a class="badge badge-inverse-primary" href="{% url 'residents:all_residents' %}?q1={{searchq1}}&q2={{searchq2}}&page=1"
+                       data-toggle="tooltip" data-placement="top" data-trigger="hover" title="First Page">First</a>
+                    <a class="badge badge-inverse-primary" href="{% url 'residents:select_house' %}?q1={{searchq1}}&q2={{searchq2}}&page= {{page_obj.previous_page_number}}"
+                       data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Previous Page">Previous</a>
                 {% endif %}
-              {% endfor %}
 
-              {% if page_obj.has_next %}
-                  <a class="badge badge-inverse-primary" href="{% url 'residents:all_residents' %}?q1={{searchq1}}&q2={{searchq2}}&page={{ page_obj.next_page_number }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Next Page">Next</a>
-                  <a class="badge badge-inverse-primary" href="{% url 'residents:all_residents' %}?q1={{searchq1}}&q2={{searchq2}}&page={{ page_obj.paginator.num_pages }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Last Page">Last</a>
+                {% for num in page_obj.paginator.page_range %}
+                  {% if page_obj.number == num %}
+                    <a class="badge badge-primary" style="color: white !important;" href="{% url 'residents:all_residents' %}?q1={{searchq1}}&q2={{searchq2}}&page={{ num }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Page {{ num }}">{{ num }}</a>
+                  {% elif num > page_obj.number|add:'-4' and num < page_obj.number|add:'4' %}
+                    <a class="badge badge-inverse-primary" href="{% url 'residents:all_residents' %}?q1={{searchq1}}&q2={{searchq2}}&page={{ num }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Page {{ num }}">{{ num }}</a>
+                  {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <a class="badge badge-inverse-primary" href="{% url 'residents:all_residents' %}?q1={{searchq1}}&q2={{searchq2}}&page={{ page_obj.next_page_number }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Next Page">Next</a>
+                    <a class="badge badge-inverse-primary" href="{% url 'residents:all_residents' %}?q1={{searchq1}}&q2={{searchq2}}&page={{ page_obj.paginator.num_pages }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Last Page">Last</a>
+                {% endif %}
+
               {% endif %}
-
-            {% endif %}
-            <a href="{% url 'residents:residents_dashboard' %}" class="b-b-primary text-primary">Back To Dashboard</a>
+              <a href="{% url 'residents:residents_dashboard' %}" class="b-b-primary text-primary">Back To Dashboard</a>
+            </div>
           </div>
+      </div>
+    </div>
+  </div>-->
+  {% endblock card2 %}
+{% else %}
+  {% block card1 %}
+  <div class="col-xl-12 col-md-12">
+
+  </div>
+  {% endblock card1 %}
+  {% block card2 %}
+    <div class="col-xl-12 col-md-12">
+      <div class="card">
+        <div class="card-header">
+
         </div>
+        <div class="card-block">
+          <h2 class="text-center text-custom">{{ info }}</h2>
+          <a href="{% url 'residents:select_house' %}" class="btn btn-grd-primary btn-round waves-effect waves-light">
+            Register New Resident</a>
+      </div>
     </div>
   </div>
-</div>-->
-{% endblock card2 %}
+  {% endblock card2 %}
+{% endif %}

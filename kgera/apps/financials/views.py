@@ -180,63 +180,55 @@ class all_service_charge(ListView):
         query1 = self.request.GET.get('q1')
         query2 = self.request.GET.get('q2')
 
-        if len(context) == 0:
-            info = "There are no Service Charge Payment Records in the database"
-            return HttpResponse('financials/all/no_service_charge.html', {'info': info})
+        if query1 is None and query2 is None:
+            allservicecharge = ServiceChargePayments.objects.all()
+            context['searchq1'] = allservicecharge
         else:
-            if query1 is None and query2 is None:
-                allservicecharge = ServiceChargePayments.objects.all()
-                context['searchq1'] = allservicecharge
-            else:
-                context['searchq1'] = query1
-                context['searchq2'] = query2
-            return context
+            context['searchq1'] = query1
+            context['searchq2'] = query2
+        return context
 
     def get_queryset(self):
         queryset = super(all_service_charge, self).get_queryset()
         query1 = self.request.GET.get('q1')
         query2 = self.request.GET.get('q2')
 
-        if len(queryset) == 0:
-            info = "There are no Service Charge Payment Records in the database"
-            return HttpResponse('financials/all/no_service_charge.html', {'info': info})
+        if query1 is None and query2 is None:
+            return queryset
         else:
-            if query1 is None and query2 is None:
-                return queryset
-            else:
-                if query1 is not None:
-                    query1 = query1.replace(" ", "+")
-                if query2 is not None:
-                    query2 = query2.replace(" ", "+")
+            if query1 is not None:
+                query1 = query1.replace(" ", "+")
+            if query2 is not None:
+                query2 = query2.replace(" ", "+")
 
-                try:
-                    house = Houses.objects.get(id=query1).housecode
-                    house_code = house.replace("/", "")
-                except ObjectDoesNotExist:
-                    house = None
-                    house_code = None
-                except ValueError:
-                    house = None
-                    house_code = None
-                ############################
-                try:
-                    rsd = Residents.objects.get(id=int(query2)).resident_code
-                except ObjectDoesNotExist:
-                    rsd = None
-                except ValueError:
-                    rsd = None
-                ###############################
+            try:
+                house = Houses.objects.get(id=query1).housecode
+                house_code = house.replace("/", "")
+            except ObjectDoesNotExist:
+                house = None
+                house_code = None
+            except ValueError:
+                house = None
+                house_code = None
+            ############################
+            try:
+                rsd = Residents.objects.get(id=int(query2)).resident_code
+            except ObjectDoesNotExist:
+                rsd = None
+            except ValueError:
+                rsd = None
+            ###############################
 
-                if house_code is not None:
-                    queryset = ServiceChargePayments.objects.filter(
-                        Q(payment_ref__icontains=house_code)
-                    )
-                elif rsd is not None:
-                    queryset = ServiceChargePayments.objects.filter(
-                        Q(resident=rsd)
-                    )
+            if house_code is not None:
+                queryset = ServiceChargePayments.objects.filter(
+                    Q(payment_ref__icontains=house_code)
+                )
+            elif rsd is not None:
+                queryset = ServiceChargePayments.objects.filter(
+                    Q(resident=rsd)
+                )
 
-                return queryset
+            return queryset
 
 
 class all_transformer_levy(ListView):
@@ -254,60 +246,52 @@ class all_transformer_levy(ListView):
         query1 = self.request.GET.get('q1')
         query2 = self.request.GET.get('q2')
 
-        if len(context) == 0:
-            info = "There are no Transformer Levy Payment Records in the database"
-            return HttpResponse('financials/all/no_transformer_levy.html', {'info': info})
+        if query1 is None and query2 is None:
+            alltransformerlevy = TransformerLevyPayments.objects.all()
+            context['searchq'] = alltransformerlevy
         else:
-            if query1 is None and query2 is None:
-                alltransformerlevy = TransformerLevyPayments.objects.all()
-                context['searchq'] = alltransformerlevy
-            else:
-                context['searchq1'] = query1
-                context['searchq2'] = query2
-            return context
+            context['searchq1'] = query1
+            context['searchq2'] = query2
+        return context
 
     def get_queryset(self):
         queryset = super(all_transformer_levy, self).get_queryset()
         query1 = self.request.GET.get('q1')
         query2 = self.request.GET.get('q2')
 
-        if len(queryset) == 0:
-            info = "There are no Transformer Levy Payment Records in the database"
-            return HttpResponse('financials/all/no_transformer_levy.html', {'info': info})
+        if query1 is None and query2 is None:
+            return queryset
         else:
-            if query1 is None and query2 is None:
-                return queryset
-            else:
-                if query1 is not None:
-                    query1 = query1.replace(" ", "+")
-                if query2 is not None:
-                    query2 = query2.replace(" ", "+")
+            if query1 is not None:
+                query1 = query1.replace(" ", "+")
+            if query2 is not None:
+                query2 = query2.replace(" ", "+")
 
-                try:
-                    house = Houses.objects.get(id=query1).housecode
-                    house_code = house.replace("/", "")
-                except ObjectDoesNotExist:
-                    house = None
-                    house_code = None
-                except ValueError:
-                    house = None
-                    house_code = None
-                ############################
-                try:
-                    rsd = Residents.objects.get(id=int(query2)).resident_code
-                except ObjectDoesNotExist:
-                    rsd = None
-                except ValueError:
-                    rsd = None
-                ###############################
+            try:
+                house = Houses.objects.get(id=query1).housecode
+                house_code = house.replace("/", "")
+            except ObjectDoesNotExist:
+                house = None
+                house_code = None
+            except ValueError:
+                house = None
+                house_code = None
+            ############################
+            try:
+                rsd = Residents.objects.get(id=int(query2)).resident_code
+            except ObjectDoesNotExist:
+                rsd = None
+            except ValueError:
+                rsd = None
+            ###############################
 
-                if house_code is not None:
-                    queryset = TransformerLevyPayments.objects.filter(
-                        Q(payment_ref__icontains=house_code)
-                    )
-                elif rsd is not None:
-                    queryset = TransformerLevyPayments.objects.filter(
-                        Q(resident=rsd)
-                    )
+            if house_code is not None:
+                queryset = TransformerLevyPayments.objects.filter(
+                    Q(payment_ref__icontains=house_code)
+                )
+            elif rsd is not None:
+                queryset = TransformerLevyPayments.objects.filter(
+                    Q(resident=rsd)
+                )
 
-                return queryset
+            return queryset

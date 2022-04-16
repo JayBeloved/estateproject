@@ -182,63 +182,55 @@ class all_residents(ListView):
         query1 = self.request.GET.get('q1')
         query2 = self.request.GET.get('q2')
 
-        if len(context) == 0:
-            info = "There are no Registered Residents in the database"
-            return HttpResponse('residents/all/no_residents.html', {'info': info})
+        if query1 is None and query2 is None:
+            allresidents = Residents.objects.all()
+            context['searchq'] = allresidents
         else:
-            if query1 is None and query2 is None:
-                allresidents = Residents.objects.all()
-                context['searchq'] = allresidents
-            else:
-                context['searchq1'] = query1
-                context['searchq2'] = query2
-            return context
+            context['searchq1'] = query1
+            context['searchq2'] = query2
+        return context
 
     def get_queryset(self):
         queryset = super(all_residents, self).get_queryset()
         query1 = self.request.GET.get('q1')
         query2 = self.request.GET.get('q2')
 
-        if len(queryset) == 0:
-            info = "There are no Registered Residents in the database"
-            return HttpResponse('residents/all/no_residents.html', {'info': info})
+        if query1 is None and query2 is None:
+            return queryset
         else:
-            if query1 is None and query2 is None:
-                return queryset
+            if query1 is not None:
+                query1 = query1.replace(" ", "+")
+            if query2 is not None:
+                query2 = query2.replace(" ", "+")
+
+            try:
+                comm_id = Community.objects.get(commcode=query1)
+            except ObjectDoesNotExist:
+                comm_id = None
+
+            try:
+                house_id = Houses.objects.get(housecode=query1)
+            except ObjectDoesNotExist:
+                house_id = None
+            except ValueError:
+                house_id = None
+
+            if comm_id is not None:
+                filtered_residents = Residents.objects.filter(house__community=comm_id)
+
+                queryset = filtered_residents.filter(
+                    Q(first_name__icontains=query2) | Q(last_name__icontains=query2)
+                )
+            elif house_id is not None:
+                queryset = Residents.objects.filter(
+                    Q(house__exact=house_id)
+                )
             else:
-                if query1 is not None:
-                    query1 = query1.replace(" ", "+")
-                if query2 is not None:
-                    query2 = query2.replace(" ", "+")
+                queryset = Residents.objects.filter(
+                    Q(first_name__icontains=query2) | Q(last_name__icontains=query2)
+                )
 
-                try:
-                    comm_id = Community.objects.get(commcode=query1)
-                except ObjectDoesNotExist:
-                    comm_id = None
-
-                try:
-                    house_id = Houses.objects.get(housecode=query1)
-                except ObjectDoesNotExist:
-                    house_id = None
-                except ValueError:
-                    house_id = None
-
-                if comm_id is not None:
-                    filtered_residents = Residents.objects.filter(house__community=comm_id)
-
-                    queryset = filtered_residents.filter(
-                        Q(first_name__icontains=query2) | Q(last_name__icontains=query2)
-                    )
-                elif house_id is not None:
-                    queryset = Residents.objects.filter(
-                        Q(house__exact=house_id)
-                    )
-                else:
-                    queryset = Residents.objects.filter(
-                        Q(first_name__icontains=query2) | Q(last_name__icontains=query2)
-                    )
-
-                return queryset
+            return queryset
 
 
 @login_required()
@@ -399,16 +391,12 @@ class select_request(ListView):
         context = super(select_request, self).get_context_data(**kwargs)
         query = self.request.GET.get('q')
 
-        if len(context) == 0:
-            info = "There are no Pending Account Request to verify"
-            return HttpResponse('residents/all/no_account_request.html', {'info': info})
+        if query is None:
+            all_requests = AccRequest.objects.all()
+            context['searchq'] = all_requests
         else:
-            if query is None:
-                all_requests = AccRequest.objects.all()
-                context['searchq'] = all_requests
-            else:
-                context['searchq'] = query
-            return context
+            context['searchq'] = query
+        return context
 
     def get_queryset(self):
         queryset = super(select_request, self).get_queryset()

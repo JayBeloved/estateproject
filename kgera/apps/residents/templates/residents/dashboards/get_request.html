@@ -2,143 +2,161 @@
 {% load res_tags %}
 {% block title %}Select Account Request{% endblock title %}
 
-{% block card1 %}
-<div class="col-xl-12 col-md-12">
-    <div class="card">
-        {% if messages %}
-            {% for message in messages %}
-                <h5 class="text-center {{ messages.tags }} animate__animated animate__fadeIn animate__delay-3s">{{ message }}</h5>
-            {% endfor %}
-        {% endif %}
+{% if requests %}
+  {% block card1 %}
+  <div class="col-xl-12 col-md-12">
+      <div class="card">
+          {% if messages %}
+              {% for message in messages %}
+                  <h5 class="text-center {{ messages.tags }} animate__animated animate__fadeIn animate__delay-3s">{{ message }}</h5>
+              {% endfor %}
+          {% endif %}
+          <div class="card-header">
+              <h5>Search HouseCode or Name</h5>
+          </div>
+          <div class="card-block">
+              <div class="row">
+                <div class="col-lg-12 col-xl-3"></div>
+                <div class="col-lg-12 col-xl-6">
+                  <form class="form-material" action="{% url 'residents:select_request' %}" method="get">
+                    <div class="form-group form-primary form-static-label">
+                        <input type="text" name="q" class="form-control" placeholder="Enter Housecode,
+                        First Name or Last Name">
+                        <span class="form-bar"></span>
+                        <label class="float-label"><i class="fa fa-search m-r-10"></i>Search</label>
+                    </div>
+                    <center><button class="btn btn-grd-primary btn-round waves-effect waves-light" type="submit">
+                      Search</button></center>
+                  </form>
+                </div>
+                <div class="col-lg-12 col-xl-3"></div>
+            </div>
+          </div>
+      </div>
+  </div>
+  {% endblock card1 %}
+  {% block card2 %}
+    <div class="col-xl-12 col-md-12">
+      <div class="card table-card">
         <div class="card-header">
-            <h5>Search HouseCode or Name</h5>
-        </div>
-        <div class="card-block">
-            <div class="row">
-              <div class="col-lg-12 col-xl-3"></div>
-              <div class="col-lg-12 col-xl-6">
-                <form class="form-material" action="{% url 'residents:select_request' %}" method="get">
-                  <div class="form-group form-primary form-static-label">
-                      <input type="text" name="q" class="form-control" placeholder="Enter Housecode, First Name or Last Name">
-                      <span class="form-bar"></span>
-                      <label class="float-label"><i class="fa fa-search m-r-10"></i>Search</label>
-                  </div>
-                  <center><button class="btn btn-grd-primary btn-round waves-effect waves-light" type="submit">Search</button></center>
-                </form>
-              </div>
-              <div class="col-lg-12 col-xl-3"></div>
+          <h5>Results</h5>
+          <div class="card-header-right">
+
           </div>
         </div>
-    </div>
-</div>
-{% endblock card1 %}
-{% block card2 %}
-  <div class="col-xl-12 col-md-12">
-    <div class="card table-card">
-      <div class="card-header">
-        <h5>Results</h5>
-        <div class="card-header-right">
+        <div class="card-block">
+           <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                    <th>House Code</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                      <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for request in requests %}
+                    <tr>
+                        <td>{{ request.house }}</td>
+                        <td>{{ request.last_name }} {{ request.first_name }}</td>
+                        <td>{{ request.email }}</td>
+                        <td><a href="{% url 'residents:new_resident_request' request.id request.house|get_id %}"
+                               class="b-b-primary text-primary">Verify Request</a></td>
+                        <td>
+                           <button href="" type ="button" class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light"
+                          data-bs-toggle="modal" data-bs-target="#consentModal{{ request.id }}">
+                          Cancel Request
+                        </button>
+                        </td>
+                    </tr>
 
-        </div>
-      </div>
-      <div class="card-block">
-        {% if requests %}
-         <div class="table-responsive">
-          <table class="table table-hover">
-              <thead>
-                  <tr>
-                  <th>House Code</th>
-                  <th>Full Name</th>
-                  <th>Email</th>
-                    <th></th>
-                  </tr>
-              </thead>
-              <tbody>
-                  {% for request in requests %}
-                  <tr>
-                      <td>{{ request.house }}</td>
-                      <td>{{ request.last_name }} {{ request.first_name }}</td>
-                      <td>{{ request.email }}</td>
-                      <td><a href="{% url 'residents:new_resident_request' request.id request.house|get_id %}"
-                             class="b-b-primary text-primary">Verify Request</a></td>
-                      <td>
-                         <button href="" type ="button" class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light"
-                        data-bs-toggle="modal" data-bs-target="#consentModal{{ request.id }}">
-                        Cancel Request
-                      </button>
-                      </td>
-                  </tr>
-
-                  <!-- Modal -->
-                    <div class="modal fade" id="consentModal{{ request.id }}" data-bs-backdrop="static" data-bs-keyboard="false"
-                         tabindex="-1" aria-labelledby="consentModal{{ request.id }}Label" aria-hidden="true">
-                      <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h5 class="modal-title" id="consentModal{{ request.id }}Label">Cancel Request</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                          </div>
-                          <div class="modal-body">
-                              <div class="card">
-                                <div class="card-block">
-                                  <div class="col-xl-12 col-md-12">
-                                    <h6 class="text-info text-center">
-                                      Do You Want To Cancel This Account Request ?
-                                    </h6>
-                                    <row style="display: flex; justify-content:center">
-                                      <div class="col-lg-12 col-xl-3">
-                                        <form action="{% url 'residents:cancel_request' request.pk %}" method="post" hidden='True'>
-                                          {% csrf_token %}
-                                          <input type="hidden" readonly=True name="cancel" value=True >
-                                          <button class="btn btn-grd-primary btn-round waves-effect waves-light"
-                                                type="submit">Yes</button>
-                                        </form>
-                                      </div>
-                                      <div class="col-lg-12 col-xl-3">
-                                        <button type="button" class="btn btn-grd-info btn-round waves-effect waves-light"
-                                                data-bs-dismiss="modal">No</button>
-                                      </div>
-                                    </row>
+                    <!-- Modal -->
+                      <div class="modal fade" id="consentModal{{ request.id }}" data-bs-backdrop="static" data-bs-keyboard="false"
+                           tabindex="-1" aria-labelledby="consentModal{{ request.id }}Label" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="consentModal{{ request.id }}Label">Cancel Request</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="card">
+                                  <div class="card-block">
+                                    <div class="col-xl-12 col-md-12">
+                                      <h6 class="text-info text-center">
+                                        Do You Want To Cancel This Account Request ?
+                                      </h6>
+                                      <row style="display: flex; justify-content:center">
+                                        <div class="col-lg-12 col-xl-3">
+                                          <form action="{% url 'residents:cancel_request' request.pk %}" method="post" hidden='True'>
+                                            {% csrf_token %}
+                                            <input type="hidden" readonly=True name="cancel" value=True >
+                                            <button class="btn btn-grd-primary btn-round waves-effect waves-light"
+                                                  type="submit">Yes</button>
+                                          </form>
+                                        </div>
+                                        <div class="col-lg-12 col-xl-3">
+                                          <button type="button" class="btn btn-grd-info btn-round waves-effect waves-light"
+                                                  data-bs-dismiss="modal">No</button>
+                                        </div>
+                                      </row>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  {% endfor %}
+                    {% endfor %}
 
-              </tbody>
-          </table>
-          <div class="text-right m-r-20">
-            {% if is_paginated %}
+                </tbody>
+            </table>
+            <div class="text-right m-r-20">
+              {% if is_paginated %}
 
-              {% if page_obj.has_previous %}
-                  <a class="badge badge-inverse-primary" href="{% url 'residents:select_request' %}?q={{searchq}}&page=1" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="First Page">First</a>
-                  <a class="badge badge-inverse-primary" href="{% url 'residents:select_request' %}?q={{searchq}}&page= {{page_obj.previous_page_number}}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Previous Page">Previous</a>
-              {% endif %}
-
-              {% for num in page_obj.paginator.page_range %}
-                {% if page_obj.number == num %}
-                  <a class="badge badge-primary" style="color: white !important;" href="{% url 'residents:select_request' %}?q={{searchq}}&page={{ num }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Page {{ num }}">{{ num }}</a>
-                {% elif num > page_obj.number|add:'-4' and num < page_obj.number|add:'4' %}
-                  <a class="badge badge-inverse-primary" href="{% url 'residents:select_request' %}?q={{searchq}}&page={{ num }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Page {{ num }}">{{ num }}</a>
+                {% if page_obj.has_previous %}
+                    <a class="badge badge-inverse-primary" href="{% url 'residents:select_request' %}?q={{searchq}}&page=1" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="First Page">First</a>
+                    <a class="badge badge-inverse-primary" href="{% url 'residents:select_request' %}?q={{searchq}}&page= {{page_obj.previous_page_number}}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Previous Page">Previous</a>
                 {% endif %}
-              {% endfor %}
 
-              {% if page_obj.has_next %}
-                  <a class="badge badge-inverse-primary" href="{% url 'residents:select_request' %}?q={{searchq}}&page={{ page_obj.next_page_number }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Next Page">Next</a>
-                  <a class="badge badge-inverse-primary" href="{% url 'residents:select_request' %}?q={{searchq}}&page={{ page_obj.paginator.num_pages }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Last Page">Last</a>
+                {% for num in page_obj.paginator.page_range %}
+                  {% if page_obj.number == num %}
+                    <a class="badge badge-primary" style="color: white !important;" href="{% url 'residents:select_request' %}?q={{searchq}}&page={{ num }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Page {{ num }}">{{ num }}</a>
+                  {% elif num > page_obj.number|add:'-4' and num < page_obj.number|add:'4' %}
+                    <a class="badge badge-inverse-primary" href="{% url 'residents:select_request' %}?q={{searchq}}&page={{ num }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Page {{ num }}">{{ num }}</a>
+                  {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <a class="badge badge-inverse-primary" href="{% url 'residents:select_request' %}?q={{searchq}}&page={{ page_obj.next_page_number }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Next Page">Next</a>
+                    <a class="badge badge-inverse-primary" href="{% url 'residents:select_request' %}?q={{searchq}}&page={{ page_obj.paginator.num_pages }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Last Page">Last</a>
+                {% endif %}
+
               {% endif %}
-
-            {% endif %}
-            <a href="{% url 'residents:residents_dashboard' %}" class="b-b-primary text-primary">Back To Dashboard</a>
+              <a href="{% url 'residents:residents_dashboard' %}" class="b-b-primary text-primary">Back To Dashboard</a>
+            </div>
           </div>
-        </div>
-        {% else %}
-          <h5 class="text-primary text-center">No Results</h5>
-        {% endif %}
+      </div>
     </div>
   </div>
-</div>
-{% endblock card2 %}
+  {% endblock card2 %}
+{% else %}
+  {% block card1 %}
+  <div class="col-xl-12 col-md-12">
+
+  </div>
+  {% endblock card1 %}
+  {% block card2 %}
+    <div class="col-xl-12 col-md-12">
+      <div class="card">
+        <div class="card-header">
+
+        </div>
+        <div class="card-block">
+          <h2 class="text-center text-custom">{{ info }}</h2>
+      </div>
+    </div>
+  </div>
+  {% endblock card2 %}
+{% endif %}
