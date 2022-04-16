@@ -2,9 +2,9 @@
 
 {% block title %}All Residents{% endblock title %}
 
-{% if residents %}
-  {% block card1 %}
-  <div class="col-xl-12 col-md-12">
+{% block card1 %}
+  {% if residents %}
+    <div class="col-xl-12 col-md-12">
       <div class="card">
           {% if messages %}
               {% for message in messages %}
@@ -38,8 +38,13 @@
           </div>
       </div>
   </div>
-  {% endblock card1 %}
-  {% block card2 %}
+  {% else %}
+    <div class="col-xl-12 col-md-12"></div>
+  {% endif %}
+{% endblock card1 %}
+
+{% block card2 %}
+  {% if residents %}
     <div class="col-xl-12 col-md-12">
       <div class="card table-card">
         <div class="card-header">
@@ -103,15 +108,8 @@
           </div>
       </div>
     </div>
-  </div>-->
-  {% endblock card2 %}
-{% else %}
-  {% block card1 %}
-  <div class="col-xl-12 col-md-12">
-
   </div>
-  {% endblock card1 %}
-  {% block card2 %}
+  {% else %}
     <div class="col-xl-12 col-md-12">
       <div class="card">
         <div class="card-header">
@@ -124,5 +122,5 @@
       </div>
     </div>
   </div>
-  {% endblock card2 %}
-{% endif %}
+  {% endif %}
+{% endblock card2 %}
