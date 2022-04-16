@@ -33,7 +33,7 @@ class ResidentFinancialStanding(models.Model):
 
 
 class ServiceChargePayments(models.Model):
-    resident = models.CharField(max_length=30)
+    resident = models.ForeignKey(Residents, on_delete=models.DO_NOTHING, to_field='resident_code')
     payment_date = models.DateField('pay_date', default=datetime.date, null=True)
     payment_note = models.TextField()
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -45,7 +45,7 @@ class ServiceChargePayments(models.Model):
 
 
 class TransformerLevyPayments(models.Model):
-    resident = models.CharField(max_length=30)
+    resident = models.ForeignKey(Residents, on_delete=models.DO_NOTHING, to_field='resident_code')
     payment_date = models.DateField('pay_date', default=datetime.date, null=True)
     payment_note = models.TextField()
     amount = models.DecimalField(max_digits=10, decimal_places=2)

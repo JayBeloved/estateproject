@@ -77,7 +77,7 @@ def financials_dashboard(request, resident_id):
                 if not ServiceChargePayments.objects.filter(payment_ref=gen_ref):
                     payment_ref = gen_ref
 
-            pay = ServiceChargePayments.objects.create(resident=pay_resident, payment_date=payment_date, amount=amount,
+            pay = ServiceChargePayments.objects.create(resident=sel_resident, payment_date=payment_date, amount=amount,
                                                        payment_note=payment_note, payment_ref=payment_ref,
                                                        status=status)
             pay.save()
@@ -85,9 +85,9 @@ def financials_dashboard(request, resident_id):
                                       "You will be notified once payment is verified.")
 
             # Re-query Context
-            sv_count = ServiceChargePayments.objects.filter(resident=sel_resident.resident_code).__len__()
+            sv_count = ServiceChargePayments.objects.filter(resident=sel_resident).__len__()
             service_charge_payments = \
-                ServiceChargePayments.objects.filter(resident=sel_resident.resident_code).order_by('-id')
+                ServiceChargePayments.objects.filter(resident=sel_resident).order_by('-id')
 
         else:
             messages.error(request, 'Error validating the form')
@@ -123,7 +123,7 @@ def financials_dashboard(request, resident_id):
                 if not TransformerLevyPayments.objects.filter(payment_ref=gen_ref):
                     payment_ref = gen_ref
 
-            pay = TransformerLevyPayments.objects.create(resident=pay_resident, payment_date=payment_date,
+            pay = TransformerLevyPayments.objects.create(resident=sel_resident, payment_date=payment_date,
                                                          amount=amount, payment_note=payment_note,
                                                          payment_ref=payment_ref,
                                                          status=status)
@@ -132,9 +132,9 @@ def financials_dashboard(request, resident_id):
                                       "You will be notified once payment is verified.")
 
             # Re-query Context
-            tl_count = TransformerLevyPayments.objects.filter(resident=sel_resident.resident_code).__len__()
+            tl_count = TransformerLevyPayments.objects.filter(resident=sel_resident).__len__()
             transformer_levy_payments = \
-                TransformerLevyPayments.objects.filter(resident=sel_resident.resident_code).order_by('-id')
+                TransformerLevyPayments.objects.filter(resident=sel_resident).order_by('-id')
 
         else:
             messages.error(request, 'Error validating the form')
@@ -142,13 +142,13 @@ def financials_dashboard(request, resident_id):
         return redirect('financials:financials_dashboard', sel_resident.id)
 
     # Get Data For Context
-    sv_count = ServiceChargePayments.objects.filter(resident=sel_resident.resident_code).__len__()
+    sv_count = ServiceChargePayments.objects.filter(resident=sel_resident).__len__()
     service_charge_payments = \
-        ServiceChargePayments.objects.filter(resident=sel_resident.resident_code).order_by('-id')
+        ServiceChargePayments.objects.filter(resident=sel_resident).order_by('-id')
 
-    tl_count = TransformerLevyPayments.objects.filter(resident=sel_resident.resident_code).__len__()
+    tl_count = TransformerLevyPayments.objects.filter(resident=sel_resident).__len__()
     transformer_levy_payments = \
-        TransformerLevyPayments.objects.filter(resident=sel_resident.resident_code).order_by('-id')
+        TransformerLevyPayments.objects.filter(resident=sel_resident).order_by('-id')
 
     context = {
         'resident': sel_resident,
