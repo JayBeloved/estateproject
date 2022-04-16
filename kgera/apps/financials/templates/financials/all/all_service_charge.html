@@ -2,8 +2,8 @@
 {% load my_tags %}
 {% block title %}Service Charge Payments{% endblock title %}
 
-{% if payments %}
-  {% block card1 %}
+{% block card1 %}
+  {% if payments %}
   <div class="col-xl-12 col-md-12">
       <div class="card">
           {% if messages %}
@@ -38,8 +38,13 @@
           </div>
       </div>
   </div>
-  {% endblock card1 %}
-  {% block card2 %}
+  {% else %}
+  <div class="col-xl-12 col-md-12"></div>
+  {% endif %}
+{% endblock card1 %}
+
+{% block card2 %}
+  {% if payments %}
     <div class="col-xl-12 col-md-12">
       <div class="card table-card">
         <div class="card-header">
@@ -49,7 +54,6 @@
           </div>
         </div>
         <div class="card-block">
-
           <div class="table-responsive">
             <table class="table table-hover">
                 <thead>
@@ -106,28 +110,21 @@
               <a href="{% url 'residents:residents_dashboard' %}" class="b-b-primary text-primary">Back To Dashboard</a>
             </div>
           </div>
+        </div>
       </div>
     </div>
-  </div>
-  {% endblock card2 %}
-{% else %}
-  {% block card1 %}
-  <div class="col-xl-12 col-md-12">
-
-  </div>
-  {% endblock card1 %}
-  {% block card2 %}
+  {% else %}
     <div class="col-xl-12 col-md-12">
-      <div class="card">
-        <div class="card-header">
+        <div class="card">
+          <div class="card-header">
 
-        </div>
-        <div class="card-block">
-          <h2 class="text-center text-custom">There are no Service Charge Payment Records in the Database</h2>
-          <a href="{% url 'residents:select_house' %}" class="btn btn-grd-primary btn-round waves-effect waves-light">
-            Register New Resident</a>
+          </div>
+          <div class="card-block">
+            <h2 class="text-center text-custom">There are no Service Charge Payment Records in the Database</h2>
+          </div>
         </div>
     </div>
-  </div>
-  {% endblock card2 %}
-{% endif %}
+  {% endif %}
+{% endblock card2 %}
+
+
