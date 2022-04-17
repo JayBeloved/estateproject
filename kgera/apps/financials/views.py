@@ -303,7 +303,7 @@ def check_service_charge(request):
     if len(sv_count) == 0:
         return render(request, 'financials/all/no_sc.html')
     else:
-        return render(request, 'financials:all_service_charge')
+        return redirect('financials:all_service_charge')
 
 
 def check_transformer_levy(request):
@@ -312,4 +312,4 @@ def check_transformer_levy(request):
     if len(tl_count) == 0:
         return render(request, 'financials/all/no_tl.html')
     else:
-        return render(request, 'financials:all_transformer_levy')
+        return redirect('financials:all_transformer_levy')
