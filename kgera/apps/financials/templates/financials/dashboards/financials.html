@@ -25,7 +25,7 @@
                 {% if resident.occupancy_status == 0 %}
                    <h5>Occupancy Status :<span class="text-primary"> Vacated House</span></h5>
                 {% else %}
-                  <h6>Status :<span  class="text-primary"> Currently Residing in the House</span></h6>
+                  <h5>Status :<span  class="text-primary"> Current Resident</span></h5>
                 {% endif %}
               </div>
           </div>
@@ -47,7 +47,7 @@
     <div class="card-header">
       <h5>Service Charge Payments</h5>
       <div class="card-header-right">
-        <a href="" class="b-b-primary text-primary m-r-20">View All</a>
+        <a href="{% url 'financials:res_sv_payments' resident.id %}" class="b-b-primary text-primary m-r-20">View All</a>
         <button href="" type ="button" class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light"
                       data-bs-toggle="modal" data-bs-target="#svModal">New Payment
         </button>

@@ -5,6 +5,15 @@ from .views import all_service_charge, all_transformer_levy
 urlpatterns = [
     path('financials/', include(([
         path('resident<int:resident_id>/dashboard/', views.financials_dashboard, name="financials_dashboard"),
+        path('resident<int:resident_id>/sv/payments/', views.resident_sv_payments, name="res_sv_payments"),
+        path('resident<int:resident_id>/sv/payments/this_month/', views.resident_sv_payments_month,
+             name="res_sv_payments_month"),
+        path('resident<int:resident_id>/sv/payments/this_year/', views.resident_sv_payments_year,
+             name="res_sv_payments_year"),
+        path('resident<int:resident_id>/sv/payments/last_year/', views.resident_sv_payments_lastyear,
+             name="res_sv_payments_lastyear"),
+        path('resident<int:resident_id>/sv/payments/older/', views.resident_sv_payments_older(),
+             name="res_sv_payments_older"),
         path('service_charge/all/', all_service_charge.as_view(), name='all_service_charge'),
         path('transformer_levy/all/', all_transformer_levy.as_view(), name='all_transformer_levy'),
         path('service_charge/check', views.check_service_charge, name='check_sc'),

@@ -9,6 +9,7 @@ from django.db.models import Q
 from django.views.generic import ListView
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django.contrib import messages
 
@@ -163,6 +164,230 @@ def financials_dashboard(request, resident_id):
     }
 
     return render(request, 'financials/dashboards/financials.html', context)
+
+
+def resident_sv_payments(request, resident_id):
+    if resident_id is None:
+        messages.error(request, 'No Resident Selected')
+        return HttpResponseRedirect(reverse("residents:all_service_charge"))
+    else:
+        try:
+            sel_resident = Residents.objects.get(id=resident_id)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Something Went Wrong')
+            return HttpResponseRedirect(reverse("residents:all_service_charge"))
+        try:
+            financial_standing = ResidentFinancialStanding.objects.get(resident=sel_resident.resident_code)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Resident Financial Standing Yet To Updated \n'
+                                    'Resident Financial Dashboard Un-available.')
+            return HttpResponseRedirect(reverse("residents:all_service_charge"))
+
+    # Get Data for context
+    sv_count = ServiceChargePayments.objects.filter(resident=sel_resident).__len__()
+    sv_count_ver = len(ServiceChargePayments.objects.filter(resident=sel_resident, status=1))
+    service_charge_payments = \
+        ServiceChargePayments.objects.filter(resident=sel_resident).order_by('-id')
+
+    page = request.Get.get('page', 1)
+    paginator = Paginator(ServiceChargePayments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': sv_count,
+        'count_ver': sv_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'financials/dashboards/res_sv_financials.html', context)
+
+
+def resident_sv_payments_month(request, resident_id):
+    if resident_id is None:
+        messages.error(request, 'No Resident Selected')
+        return HttpResponseRedirect(reverse("residents:all_service_charge"))
+    else:
+        try:
+            sel_resident = Residents.objects.get(id=resident_id)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Something Went Wrong')
+            return HttpResponseRedirect(reverse("residents:all_service_charge"))
+        try:
+            financial_standing = ResidentFinancialStanding.objects.get(resident=sel_resident.resident_code)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Resident Financial Standing Yet To Updated \n'
+                                    'Resident Financial Dashboard Un-available.')
+            return HttpResponseRedirect(reverse("residents:all_service_charge"))
+
+    # Get Data for context
+    sv_count = ServiceChargePayments.objects.filter\
+        (resident=sel_resident, payment_date__month=datetime.date.today().month).__len__()
+    sv_count_ver = len(ServiceChargePayments.objects.filter(resident=sel_resident, status=1,
+                                                            payment_date__month=datetime.date.today().month))
+    service_charge_payments = \
+        ServiceChargePayments.objects.filter(resident=sel_resident,
+                                             payment_date__month=datetime.date.today().month).order_by('-id')
+
+    page = request.Get.get('page', 1)
+    paginator = Paginator(ServiceChargePayments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': sv_count,
+        'count_ver': sv_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'financials/dashboards/res_sv_financials.html', context)
+
+
+def resident_sv_payments_year(request, resident_id):
+    if resident_id is None:
+        messages.error(request, 'No Resident Selected')
+        return HttpResponseRedirect(reverse("residents:all_service_charge"))
+    else:
+        try:
+            sel_resident = Residents.objects.get(id=resident_id)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Something Went Wrong')
+            return HttpResponseRedirect(reverse("residents:all_service_charge"))
+        try:
+            financial_standing = ResidentFinancialStanding.objects.get(resident=sel_resident.resident_code)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Resident Financial Standing Yet To Updated \n'
+                                    'Resident Financial Dashboard Un-available.')
+            return HttpResponseRedirect(reverse("residents:all_service_charge"))
+
+    # Get Data for context
+    sv_count = ServiceChargePayments.objects.filter\
+        (resident=sel_resident, payment_date__year=datetime.date.today().year).__len__()
+    sv_count_ver = len(ServiceChargePayments.objects.filter(resident=sel_resident, status=1,
+                                                            payment_date__year=datetime.date.today().year))
+    service_charge_payments = \
+        ServiceChargePayments.objects.filter(resident=sel_resident,
+                                             payment_date__year=datetime.date.today().year).order_by('-id')
+
+    page = request.Get.get('page', 1)
+    paginator = Paginator(ServiceChargePayments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': sv_count,
+        'count_ver': sv_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'financials/dashboards/res_sv_financials.html', context)
+
+
+def resident_sv_payments_lastyear(request, resident_id):
+    if resident_id is None:
+        messages.error(request, 'No Resident Selected')
+        return HttpResponseRedirect(reverse("residents:all_service_charge"))
+    else:
+        try:
+            sel_resident = Residents.objects.get(id=resident_id)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Something Went Wrong')
+            return HttpResponseRedirect(reverse("residents:all_service_charge"))
+        try:
+            financial_standing = ResidentFinancialStanding.objects.get(resident=sel_resident.resident_code)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Resident Financial Standing Yet To Updated \n'
+                                    'Resident Financial Dashboard Un-available.')
+            return HttpResponseRedirect(reverse("residents:all_service_charge"))
+
+    # Get Data for context
+    # Get last year value
+    last_year = datetime.date.today().year - 1
+    sv_count = ServiceChargePayments.objects.filter(resident=sel_resident,
+                                                    payment_date__year=last_year).__len__()
+    sv_count_ver = len(ServiceChargePayments.objects.filter(resident=sel_resident, status=1,
+                                                            payment_date__year=last_year))
+    service_charge_payments = \
+        ServiceChargePayments.objects.filter(resident=sel_resident,
+                                             payment_date__year=last_year).order_by('-id')
+
+    page = request.Get.get('page', 1)
+    paginator = Paginator(ServiceChargePayments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': sv_count,
+        'count_ver': sv_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'financials/dashboards/res_sv_financials.html', context)
+
+
+def resident_sv_payments_older(request, resident_id):
+    if resident_id is None:
+        messages.error(request, 'No Resident Selected')
+        return HttpResponseRedirect(reverse("residents:all_service_charge"))
+    else:
+        try:
+            sel_resident = Residents.objects.get(id=resident_id)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Something Went Wrong')
+            return HttpResponseRedirect(reverse("residents:all_service_charge"))
+        try:
+            financial_standing = ResidentFinancialStanding.objects.get(resident=sel_resident.resident_code)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Resident Financial Standing Yet To Updated \n'
+                                    'Resident Financial Dashboard Un-available.')
+            return HttpResponseRedirect(reverse("residents:all_service_charge"))
+
+    # Get Data for context
+    sv_count = ServiceChargePayments.objects.filter\
+        (resident=sel_resident, payment_date__year=datetime.date.today().year).__len__()
+    sv_count_ver = len(ServiceChargePayments.objects.filter(resident=sel_resident, status=1,
+                                                            payment_date__year=datetime.date.today().year))
+    service_charge_payments = \
+        ServiceChargePayments.objects.filter(resident=sel_resident,
+                                             payment_date__year=datetime.date.today().year).order_by('-id')
+
+    page = request.Get.get('page', 1)
+    paginator = Paginator(ServiceChargePayments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': sv_count,
+        'count_ver': sv_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'financials/dashboards/res_sv_financials.html', context)
 
 
 class all_service_charge(ListView):

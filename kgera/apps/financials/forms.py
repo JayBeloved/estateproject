@@ -99,3 +99,7 @@ class SearchForm(forms.Form):
 
             }
         ))
+
+
+class FilterForm(forms.Form):
+    pass

@@ -288,13 +288,13 @@ def residents_info(request, resident_id):
         prop_count = properties.__len__()
 
         # Financials
-        sv_count = ServiceChargePayments.objects.filter(resident=sel_resident.resident_code).__len__()
+        sv_count = ServiceChargePayments.objects.filter(resident=sel_resident).__len__()
         service_charge_payments = \
-            ServiceChargePayments.objects.filter(resident=sel_resident.resident_code).order_by('id')[:3]
+            ServiceChargePayments.objects.filter(resident=sel_resident).order_by('id')[:3]
 
-        tl_count = TransformerLevyPayments.objects.filter(resident=sel_resident.resident_code).__len__()
+        tl_count = TransformerLevyPayments.objects.filter(resident=sel_resident).__len__()
         transformer_levy_payments = \
-            TransformerLevyPayments.objects.filter(resident=sel_resident.resident_code).order_by('id')[:3]
+            TransformerLevyPayments.objects.filter(resident=sel_resident).order_by('id')[:3]
 
         context = {
             'prop_form': prop_form,

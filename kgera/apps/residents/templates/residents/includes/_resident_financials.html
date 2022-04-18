@@ -39,8 +39,12 @@
                             <tr>
                               <td>{{ payment.payment_date }}</td>
                               <td>{{ payment.payment_ref }}</td>
-                              <td>{{ payment.payment_amount }}</td>
-                              <td>{{ payment.status }}</td>
+                              <td>N {{ payment.amount }}</td>
+                              {% if payment.status == 0 %}
+                                <td>Verification Pending</td>
+                              {% else %}
+                                <td>Payment Verified</td>
+                              {% endif %}
                                 <td><a href="" class="b-b-primary text-primary">Receipt</a></td>
                             </tr>
                             {% endfor %}
@@ -83,8 +87,12 @@
                             <tr>
                               <td>{{ payment.payment_date }}</td>
                               <td>{{ payment.payment_ref }}</td>
-                              <td>{{ payment.payment_amount }}</td>
-                              <td>{{ payment.status }}</td>
+                              <td>{{ payment.amount }}</td>
+                              {% if payment.status == 0 %}
+                                <td>Verification Pending</td>
+                              {% else %}
+                                <td>Payment Verified</td>
+                              {% endif %}
                                 <td><a href="" class="b-b-primary text-primary">Receipt</a></td>
                             </tr>
                             {% endfor %}
