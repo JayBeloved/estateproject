@@ -12,7 +12,7 @@ urlpatterns = [
              name="res_sv_payments_year"),
         path('resident<int:resident_id>/sv/payments/last_year/', views.resident_sv_payments_lastyear,
              name="res_sv_payments_lastyear"),
-        path('resident<int:resident_id>/sv/payments/older/', views.resident_sv_payments_older(),
+        path('resident<int:resident_id>/sv/payments/older/', views.resident_sv_payments_older,
              name="res_sv_payments_older"),
         path('service_charge/all/', all_service_charge.as_view(), name='all_service_charge'),
         path('transformer_levy/all/', all_transformer_levy.as_view(), name='all_transformer_levy'),

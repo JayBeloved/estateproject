@@ -227,11 +227,14 @@ def resident_sv_payments_month(request, resident_id):
 
     # Get Data for context
     sv_count = ServiceChargePayments.objects.filter\
-        (resident=sel_resident, payment_date__month=datetime.date.today().month).__len__()
+        (resident=sel_resident, payment_date__year=datetime.date.today().year,
+         payment_date__month=datetime.date.today().month).__len__()
     sv_count_ver = len(ServiceChargePayments.objects.filter(resident=sel_resident, status=1,
+                                                            payment_date__year=datetime.date.today().year,
                                                             payment_date__month=datetime.date.today().month))
     service_charge_payments = \
         ServiceChargePayments.objects.filter(resident=sel_resident,
+                                             payment_date__year=datetime.date.today().year,
                                              payment_date__month=datetime.date.today().month).order_by('-id')
 
     page = request.Get.get('page', 1)
@@ -363,13 +366,15 @@ def resident_sv_payments_older(request, resident_id):
             return HttpResponseRedirect(reverse("residents:all_service_charge"))
 
     # Get Data for context
-    sv_count = ServiceChargePayments.objects.filter\
-        (resident=sel_resident, payment_date__year=datetime.date.today().year).__len__()
+    # Get last year value
+    last_year = datetime.date.today().year - 1
+    sv_count = ServiceChargePayments.objects.filter(resident=sel_resident,
+                                                    payment_date__lte=datetime.date(last_year, 1, 1)).__len__()
     sv_count_ver = len(ServiceChargePayments.objects.filter(resident=sel_resident, status=1,
-                                                            payment_date__year=datetime.date.today().year))
+                                                            payment_date__lte=datetime.date(last_year, 1, 1)))
     service_charge_payments = \
         ServiceChargePayments.objects.filter(resident=sel_resident,
-                                             payment_date__year=datetime.date.today().year).order_by('-id')
+                                             payment_date__year=datetime.date(last_year, 1, 1)).order_by('-id')
 
     page = request.Get.get('page', 1)
     paginator = Paginator(ServiceChargePayments, 10)
