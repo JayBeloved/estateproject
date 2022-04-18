@@ -13,6 +13,7 @@ from django.contrib import messages
 from django.http.response import HttpResponseRedirect
 
 from django.urls import reverse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from ..structure.models import Houses, Community
 from ..residents.models import Residents, Properties
@@ -21,8 +22,8 @@ from .models import AccRequest
 from .forms import account_request_form, ProfileInfoForm, ProfileInfoUpdateForm, ProfilePicsUpdateForm
 from ..residents.forms import ResidentInfoForm, ResidentUpdateForm, NewPropertyForm, EditPropertyForm
 
-# from ..financials.models import ResidentFinancialStanding, ServiceChargePayments, TransformerLevyPayments
-
+from ..financials.models import ResidentFinancialStanding, ServiceChargePayments, TransformerLevyPayments
+import datetime
 
 # import string
 # import random
@@ -127,6 +128,7 @@ def request_success(request):
 def request_error(request):
     return render(request, 'basic/dashboards/request_error.html')
 
+
 @login_required()
 @basic_required()
 def resident_dashboard(request):
@@ -186,6 +188,395 @@ def resident_dashboard(request):
         'prop_count': prop_count,
     }
     return render(request, 'basic/dashboards/resident_dashboard.html', context)
+
+
+@login_required()
+@basic_required()
+def service_charge_dashboard(request):
+    try:
+        sel_resident = Residents.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        messages.error(request, 'Something Went Wrong \n'
+                                'There is no Resident Data attached to this account.')
+        return HttpResponseRedirect(reverse("resident_account:resident_dashboard"))
+
+    # Get Data for context
+    sv_count = ServiceChargePayments.objects.filter(resident=sel_resident).__len__()
+    sv_count_ver = len(ServiceChargePayments.objects.filter(resident=sel_resident, status=1))
+    service_charge_payments = \
+        ServiceChargePayments.objects.filter(resident=sel_resident).order_by('-id')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(service_charge_payments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': sv_count,
+        'count_ver': sv_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'basic/all/res_sv_financials.html', context)
+
+
+@login_required()
+@basic_required()
+def sv_payments_month(request):
+    try:
+        sel_resident = Residents.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        messages.error(request, 'Something Went Wrong \n'
+                                'There is no Resident Data attached to this account.')
+        return HttpResponseRedirect(reverse("resident_account:resident_dashboard"))
+    # Get Data for context
+    sv_count = ServiceChargePayments.objects.filter \
+        (resident=sel_resident, payment_date__year=datetime.date.today().year,
+         payment_date__month=datetime.date.today().month).__len__()
+    sv_count_ver = len(ServiceChargePayments.objects.filter(resident=sel_resident, status=1,
+                                                            payment_date__year=datetime.date.today().year,
+                                                            payment_date__month=datetime.date.today().month))
+    service_charge_payments = \
+        ServiceChargePayments.objects.filter(resident=sel_resident,
+                                             payment_date__year=datetime.date.today().year,
+                                             payment_date__month=datetime.date.today().month).order_by('-id')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(service_charge_payments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': sv_count,
+        'count_ver': sv_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'basic/all/res_sv_financials.html', context)
+
+
+@login_required()
+@basic_required()
+def sv_payments_year(request):
+    try:
+        sel_resident = Residents.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        messages.error(request, 'Something Went Wrong \n'
+                                'There is no Resident Data attached to this account.')
+        return HttpResponseRedirect(reverse("resident_account:resident_dashboard"))
+    # Get Data for context
+    sv_count = ServiceChargePayments.objects.filter\
+        (resident=sel_resident, payment_date__year=datetime.date.today().year).__len__()
+    sv_count_ver = len(ServiceChargePayments.objects.filter(resident=sel_resident, status=1,
+                                                            payment_date__year=datetime.date.today().year))
+    service_charge_payments = \
+        ServiceChargePayments.objects.filter(resident=sel_resident,
+                                             payment_date__year=datetime.date.today().year).order_by('-id')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(service_charge_payments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': sv_count,
+        'count_ver': sv_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'basic/all/res_sv_financials.html', context)
+
+
+@login_required()
+@basic_required()
+def sv_payments_lastyear(request):
+    try:
+        sel_resident = Residents.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        messages.error(request, 'Something Went Wrong \n'
+                                'There is no Resident Data attached to this account.')
+        return HttpResponseRedirect(reverse("resident_account:resident_dashboard"))
+
+    # Get Data for context
+    # Get last year value
+    last_year = datetime.date.today().year - 1
+    sv_count = ServiceChargePayments.objects.filter(resident=sel_resident,
+                                                    payment_date__year=last_year).__len__()
+    sv_count_ver = len(ServiceChargePayments.objects.filter(resident=sel_resident, status=1,
+                                                            payment_date__year=last_year))
+    service_charge_payments = \
+        ServiceChargePayments.objects.filter(resident=sel_resident,
+                                             payment_date__year=last_year).order_by('-id')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(service_charge_payments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': sv_count,
+        'count_ver': sv_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'basic/all/res_sv_financials.html', context)
+
+
+@login_required()
+@basic_required()
+def sv_payments_older(request):
+    try:
+        sel_resident = Residents.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        messages.error(request, 'Something Went Wrong \n'
+                                'There is no Resident Data attached to this account.')
+        return HttpResponseRedirect(reverse("resident_account:resident_dashboard"))
+    # Get Data for context
+    # Get last year value
+    last_year = datetime.date.today().year - 1
+    sv_count = ServiceChargePayments.objects.filter(resident=sel_resident,
+                                                    payment_date__lte=datetime.date(last_year, 1, 1)).__len__()
+    sv_count_ver = len(ServiceChargePayments.objects.filter(resident=sel_resident, status=1,
+                                                            payment_date__lte=datetime.date(last_year, 1, 1)))
+    service_charge_payments = \
+        ServiceChargePayments.objects.filter(resident=sel_resident,
+                                             payment_date__lte=datetime.date(last_year, 1, 1)).order_by('-id')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(service_charge_payments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': sv_count,
+        'count_ver': sv_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'basic/all/res_sv_financials.html', context)
+
+
+#################################################################################################
+@login_required()
+@basic_required()
+def Transformer_levy_dashboard(request):
+    try:
+        sel_resident = Residents.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        messages.error(request, 'Something Went Wrong \n'
+                                'There is no Resident Data attached to this account.')
+        return HttpResponseRedirect(reverse("resident_account:resident_dashboard"))
+
+    # Get Data for context
+    tl_count = TransformerLevyPayments.objects.filter(resident=sel_resident).__len__()
+    tl_count_ver = len(TransformerLevyPayments.objects.filter(resident=sel_resident, status=1))
+    transformer_levy_payments = \
+        TransformerLevyPayments.objects.filter(resident=sel_resident).order_by('-id')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(transformer_levy_payments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': tl_count,
+        'count_ver': tl_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'basic/all/res_tl_financials.html', context)
+
+
+@login_required()
+@basic_required()
+def tl_payments_month(request):
+    try:
+        sel_resident = Residents.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        messages.error(request, 'Something Went Wrong \n'
+                                'There is no Resident Data attached to this account.')
+        return HttpResponseRedirect(reverse("resident_account:resident_dashboard"))
+
+    # Get Data for context
+    tl_count = TransformerLevyPayments.objects.filter\
+        (resident=sel_resident, payment_date__year=datetime.date.today().year,
+         payment_date__month=datetime.date.today().month).__len__()
+    tl_count_ver = len(TransformerLevyPayments.objects.filter(resident=sel_resident, status=1,
+                                                              payment_date__year=datetime.date.today().year,
+                                                              payment_date__month=datetime.date.today().month))
+    transformer_levy_payments = \
+        TransformerLevyPayments.objects.filter(resident=sel_resident,
+                                               payment_date__year=datetime.date.today().year,
+                                               payment_date__month=datetime.date.today().month).order_by('-id')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(transformer_levy_payments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': tl_count,
+        'count_ver': tl_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'basic/all/res_tl_financials.html', context)
+
+
+@login_required()
+@basic_required()
+def tl_payments_year(request):
+    try:
+        sel_resident = Residents.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        messages.error(request, 'Something Went Wrong \n'
+                                'There is no Resident Data attached to this account.')
+        return HttpResponseRedirect(reverse("resident_account:resident_dashboard"))
+
+    # Get Data for context
+    tl_count = TransformerLevyPayments.objects.filter \
+        (resident=sel_resident, payment_date__year=datetime.date.today().year).__len__()
+    tl_count_ver = len(TransformerLevyPayments.objects.filter(resident=sel_resident, status=1,
+                                                              payment_date__year=datetime.date.today().year))
+    transformer_levy_payments = \
+        TransformerLevyPayments.objects.filter(resident=sel_resident,
+                                               payment_date__year=datetime.date.today().year).order_by('-id')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(transformer_levy_payments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': tl_count,
+        'count_ver': tl_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'basic/all/res_tl_financials.html', context)
+
+
+@login_required()
+@basic_required()
+def tl_payments_lastyear(request):
+    try:
+        sel_resident = Residents.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        messages.error(request, 'Something Went Wrong \n'
+                                'There is no Resident Data attached to this account.')
+        return HttpResponseRedirect(reverse("resident_account:resident_dashboard"))
+
+    # Get Data for context
+    # Get last year value
+    last_year = datetime.date.today().year - 1
+    tl_count = TransformerLevyPayments.objects.filter(resident=sel_resident,
+                                                      payment_date__year=last_year).__len__()
+    tl_count_ver = len(TransformerLevyPayments.objects.filter(resident=sel_resident, status=1,
+                                                              payment_date__year=last_year))
+    transformer_levy_payments = \
+        TransformerLevyPayments.objects.filter(resident=sel_resident,
+                                               payment_date__year=last_year).order_by('-id')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(transformer_levy_payments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': tl_count,
+        'count_ver': tl_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'basic/all/res_tl_financials.html', context)
+
+
+@login_required()
+@basic_required()
+def tl_payments_older(request):
+    try:
+        sel_resident = Residents.objects.get(user=request.user)
+    except ObjectDoesNotExist:
+        messages.error(request, 'Something Went Wrong \n'
+                                'There is no Resident Data attached to this account.')
+        return HttpResponseRedirect(reverse("resident_account:resident_dashboard"))
+
+    # Get Data for context
+    # Get last year value
+    last_year = datetime.date.today().year - 1
+    tl_count = TransformerLevyPayments.objects.filter(resident=sel_resident,
+                                                      payment_date__lte=datetime.date(last_year, 1, 1)).__len__()
+    tl_count_ver = len(TransformerLevyPayments.objects.filter(resident=sel_resident, status=1,
+                                                              payment_date__lte=datetime.date(last_year, 1, 1)))
+    transformer_levy_payments = \
+        TransformerLevyPayments.objects.filter(resident=sel_resident,
+                                               payment_date__lte=datetime.date(last_year, 1, 1)).order_by('-id')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(transformer_levy_payments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': tl_count,
+        'count_ver': tl_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'basic/all/res_tl_financials.html', context)
+
+
+###############################################################################################################
 
 
 @login_required()

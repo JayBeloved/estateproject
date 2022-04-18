@@ -1,5 +1,5 @@
 {% extends 'financials/layouts/allbase.html' %}
-{% block title %}Service Charge Payments{% endblock title %}
+{% block title %}My Service Charge Payments{% endblock title %}
 
 {% block card1 %}
   <div class="col-xl-12 col-md-12">
@@ -15,22 +15,22 @@
         <div class="card-block">
               <div class="row">
                 <div class="col-lg-12 col-xl-3">
-                  <a href="{% url 'financials:res_sv_payments_month' resident.id %}" type ="button" class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light">
+                  <a href="{% url 'resident_account:sv_payments_month' %}" type ="button" class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light">
                      This Month
                   </a>
                 </div>
                 <div class="col-lg-12 col-xl-3">
-                  <a href="{% url 'financials:res_sv_payments_year' resident.id %}" type ="button" class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light">
+                  <a href="{% url 'resident_account:sv_payments_year' %}" type ="button" class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light">
                      This Year
                   </a>
                 </div>
                 <div class="col-lg-12 col-xl-3">
-                  <a href="{% url 'financials:res_sv_payments_lastyear' resident.id %}" type ="button" class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light">
+                  <a href="{% url 'resident_account:sv_payments_lastyear' %}" type ="button" class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light">
                      Last Year
                   </a>
                 </div>
                 <div class="col-lg-12 col-xl-3">
-                  <a href="{% url 'financials:res_sv_payments_older' resident.id %}" type ="button" class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light">
+                  <a href="{% url 'resident_account:sv_payments_older' %}" type ="button" class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light">
                      Older
                   </a>
                 </div>
@@ -47,7 +47,7 @@
         <div class="card-header">
           <h5>{{ count }} Payments Made | {{ count_ver }} Payments Verified</h5>
           <div class="card-header-right">
-              <a href="{% url 'financials:res_sv_payments' resident.id %}" class="b-b-primary text-primary">
+              <a href="{% url 'resident_account:sv_payments' %}" class="b-b-primary text-primary">
                 Show All Payments</a>
           </div>
         </div>
@@ -71,10 +71,9 @@
                           <td>N {{ payment.amount }}</td>
                           {% if payment.status == 0 %}
                           <td>Verification Pending</td>
-                          <td><a href="" class="b-b-primary text-primary">Verify Payment</a></td>
                           {% else %}
                           <td>Payment Verified</td>
-                          <td><a href="" class="b-b-primary text-primary">View Receipt</a></td>
+                           <td><a href="" class="b-b-primary text-primary">View Receipt</a></td>
                           {% endif %}
                         </tr>
                       {% endif %}
@@ -85,27 +84,27 @@
               {% if payments.has_other_pages %}
 
                 {% if payments.has_previous %}
-                    <a class="badge badge-inverse-primary" href="{% url 'financials:res_sv_payments' resident.id %}?q1={{searchq1}}&page=1"
+                    <a class="badge badge-inverse-primary" href="{% url 'resident_account:sv_payments' %}?q1={{searchq1}}&page=1"
                        data-toggle="tooltip" data-placement="top" data-trigger="hover" title="First Page">First</a>
-                    <a class="badge badge-inverse-primary" href="{% url 'financials:res_sv_payments' resident.id %}?q1={{searchq1}}&page= {{payments.previous_page_number}}"
+                    <a class="badge badge-inverse-primary" href="{% url 'resident_account:sv_payments' %}?q1={{searchq1}}&page= {{payments.previous_page_number}}"
                        data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Previous Page">Previous</a>
                 {% endif %}
 
                 {% for num in payments.paginator.page_range %}
                   {% if payments.number == num %}
-                    <a class="badge badge-primary" style="color: white !important;" href="{% url 'financials:res_sv_payments' resident.id %}?q1={{searchq1}}&page={{ num }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Page {{ num }}">{{ num }}</a>
+                    <a class="badge badge-primary" style="color: white !important;" href="{% url 'resident_account:sv_payments' %}?q1={{searchq1}}&page={{ num }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Page {{ num }}">{{ num }}</a>
                   {% elif num > payments.number|add:'-4' and num < payments.number|add:'4' %}
-                    <a class="badge badge-inverse-primary" href="{% url 'financials:res_sv_payments' resident.id %}?q1={{searchq1}}&q2={{searchq2}}&page={{ num }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Page {{ num }}">{{ num }}</a>
+                    <a class="badge badge-inverse-primary" href="{% url 'resident_account:sv_payments' %}?q1={{searchq1}}&q2={{searchq2}}&page={{ num }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Page {{ num }}">{{ num }}</a>
                   {% endif %}
                 {% endfor %}
 
                 {% if payments.has_next %}
-                    <a class="badge badge-inverse-primary" href="{% url 'financials:res_sv_payments' resident.id %}?q1={{searchq1}}&page={{ page_obj.next_page_number }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Next Page">Next</a>
-                    <a class="badge badge-inverse-primary" href="{% url 'financials:res_sv_payments' resident.id %}?q1={{searchq1}}&page={{ page_obj.paginator.num_pages }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Last Page">Last</a>
+                    <a class="badge badge-inverse-primary" href="{% url 'resident_account:sv_payments' %}?q1={{searchq1}}&page={{ page_obj.next_page_number }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Next Page">Next</a>
+                    <a class="badge badge-inverse-primary" href="{% url 'resident_account:sv_payments' %}?q1={{searchq1}}&page={{ page_obj.paginator.num_pages }}" data-toggle="tooltip" data-placement="top" data-trigger="hover" title="Last Page">Last</a>
                 {% endif %}
 
               {% endif %}
-              <a href="{% url 'residents:residents_dashboard' %}" class="b-b-primary text-primary">Back To Dashboard</a>
+              <a href="{% url 'resident_account:residents_dashboard' %}" class="b-b-primary text-primary">Back To Dashboard</a>
             </div>
           </div>
         </div>
@@ -118,9 +117,9 @@
 
           </div>
           <div class="card-block">
-            <h2 class="text-center text-custom">There are no Service Charge Payment Records.</h2>
-             <center><a href="{% url 'financials:res_sv_payments' resident.id %}" class="btn btn-grd-primary btn-round waves-effect waves-light" type="submit">
-               Show All</a></center>
+            <h2 class="text-center text-custom">You have No Service Charge Payment Record.</h2>
+             <center><a href="{% url 'resident_account:sv_payments' %}" class="btn btn-grd-primary btn-round waves-effect waves-light" type="submit">
+               My Financial Standing</a></center>
           </div>
         </div>
     </div>

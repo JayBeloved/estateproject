@@ -1,5 +1,3 @@
-import datetime
-
 from django.shortcuts import render, get_object_or_404, redirect
 
 from django.contrib.auth.decorators import login_required
@@ -24,6 +22,7 @@ from .forms import Pay_Service_ChargeForm, Pay_Transformer_LevyForm, SearchForm
 
 import random
 import string
+import datetime
 
 
 @login_required()
@@ -374,7 +373,7 @@ def resident_sv_payments_older(request, resident_id):
                                                             payment_date__lte=datetime.date(last_year, 1, 1)))
     service_charge_payments = \
         ServiceChargePayments.objects.filter(resident=sel_resident,
-                                             payment_date__year=datetime.date(last_year, 1, 1)).order_by('-id')
+                                             payment_date__lte=datetime.date(last_year, 1, 1)).order_by('-id')
 
     page = request.GET.get('page', 1)
     paginator = Paginator(service_charge_payments, 10)
@@ -459,6 +458,236 @@ class all_service_charge(ListView):
                 )
 
             return queryset
+
+
+###############################################################################
+def resident_tl_payments(request, resident_id):
+    if resident_id is None:
+        messages.error(request, 'No Resident Selected')
+        return HttpResponseRedirect(reverse("residents:all_transformer_levy"))
+    else:
+        try:
+            sel_resident = Residents.objects.get(id=resident_id)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Something Went Wrong')
+            return HttpResponseRedirect(reverse("residents:all_transformer_levy"))
+        try:
+            financial_standing = ResidentFinancialStanding.objects.get(resident=sel_resident.resident_code)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Resident Financial Standing Yet To Updated \n'
+                                    'Resident Financial Dashboard Un-available.')
+            return HttpResponseRedirect(reverse("residents:all_transformer_levy"))
+
+    # Get Data for context
+    tl_count = TransformerLevyPayments.objects.filter(resident=sel_resident).__len__()
+    tl_count_ver = len(TransformerLevyPayments.objects.filter(resident=sel_resident, status=1))
+    transformer_levy_payments = \
+        TransformerLevyPayments.objects.filter(resident=sel_resident).order_by('-id')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(transformer_levy_payments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': tl_count,
+        'count_ver': tl_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'financials/dashboards/res_tl_financials.html', context)
+
+
+def resident_tl_payments_month(request, resident_id):
+    if resident_id is None:
+        messages.error(request, 'No Resident Selected')
+        return HttpResponseRedirect(reverse("residents:all_transformer_levy"))
+    else:
+        try:
+            sel_resident = Residents.objects.get(id=resident_id)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Something Went Wrong')
+            return HttpResponseRedirect(reverse("residents:all_transformer_levy"))
+        try:
+            financial_standing = ResidentFinancialStanding.objects.get(resident=sel_resident.resident_code)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Resident Financial Standing Yet To Updated \n'
+                                    'Resident Financial Dashboard Un-available.')
+            return HttpResponseRedirect(reverse("residents:all_transformer_levy"))
+
+    # Get Data for context
+    tl_count = TransformerLevyPayments.objects.filter\
+        (resident=sel_resident, payment_date__year=datetime.date.today().year,
+         payment_date__month=datetime.date.today().month).__len__()
+    tl_count_ver = len(TransformerLevyPayments.objects.filter(resident=sel_resident, status=1,
+                                                            payment_date__year=datetime.date.today().year,
+                                                            payment_date__month=datetime.date.today().month))
+    transformer_levy_payments = \
+        TransformerLevyPayments.objects.filter(resident=sel_resident,
+                                             payment_date__year=datetime.date.today().year,
+                                             payment_date__month=datetime.date.today().month).order_by('-id')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(transformer_levy_payments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': tl_count,
+        'count_ver': tl_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'financials/dashboards/res_tl_financials.html', context)
+
+
+def resident_tl_payments_year(request, resident_id):
+    if resident_id is None:
+        messages.error(request, 'No Resident Selected')
+        return HttpResponseRedirect(reverse("residents:all_transformer_levy"))
+    else:
+        try:
+            sel_resident = Residents.objects.get(id=resident_id)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Something Went Wrong')
+            return HttpResponseRedirect(reverse("residents:all_transformer_levy"))
+        try:
+            financial_standing = ResidentFinancialStanding.objects.get(resident=sel_resident.resident_code)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Resident Financial Standing Yet To Updated \n'
+                                    'Resident Financial Dashboard Un-available.')
+            return HttpResponseRedirect(reverse("residents:all_transformer_levy"))
+
+    # Get Data for context
+    tl_count = TransformerLevyPayments.objects.filter\
+        (resident=sel_resident, payment_date__year=datetime.date.today().year).__len__()
+    tl_count_ver = len(TransformerLevyPayments.objects.filter(resident=sel_resident, status=1,
+                                                              payment_date__year=datetime.date.today().year))
+    transformer_levy_payments = \
+        TransformerLevyPayments.objects.filter(resident=sel_resident,
+                                               payment_date__year=datetime.date.today().year).order_by('-id')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(transformer_levy_payments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': tl_count,
+        'count_ver': tl_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'financials/dashboards/res_tl_financials.html', context)
+
+
+def resident_tl_payments_lastyear(request, resident_id):
+    if resident_id is None:
+        messages.error(request, 'No Resident Selected')
+        return HttpResponseRedirect(reverse("residents:all_transformer_levy"))
+    else:
+        try:
+            sel_resident = Residents.objects.get(id=resident_id)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Something Went Wrong')
+            return HttpResponseRedirect(reverse("residents:all_transformer_levy"))
+        try:
+            financial_standing = ResidentFinancialStanding.objects.get(resident=sel_resident.resident_code)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Resident Financial Standing Yet To Updated \n'
+                                    'Resident Financial Dashboard Un-available.')
+            return HttpResponseRedirect(reverse("residents:all_transformer_levy"))
+
+    # Get Data for context
+    # Get last year value
+    last_year = datetime.date.today().year - 1
+    tl_count = TransformerLevyPayments.objects.filter(resident=sel_resident,
+                                                      payment_date__year=last_year).__len__()
+    tl_count_ver = len(TransformerLevyPayments.objects.filter(resident=sel_resident, status=1,
+                                                              payment_date__year=last_year))
+    transformer_levy_payments = \
+        TransformerLevyPayments.objects.filter(resident=sel_resident,
+                                               payment_date__year=last_year).order_by('-id')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(transformer_levy_payments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': tl_count,
+        'count_ver': tl_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'financials/dashboards/res_tl_financials.html', context)
+
+
+def resident_tl_payments_older(request, resident_id):
+    if resident_id is None:
+        messages.error(request, 'No Resident Selected')
+        return HttpResponseRedirect(reverse("residents:all_transformer_levy"))
+    else:
+        try:
+            sel_resident = Residents.objects.get(id=resident_id)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Something Went Wrong')
+            return HttpResponseRedirect(reverse("residents:all_transformer_levy"))
+        try:
+            financial_standing = ResidentFinancialStanding.objects.get(resident=sel_resident.resident_code)
+        except ObjectDoesNotExist:
+            messages.error(request, 'Resident Financial Standing Yet To Updated \n'
+                                    'Resident Financial Dashboard Un-available.')
+            return HttpResponseRedirect(reverse("residents:all_transformer_levy"))
+
+    # Get Data for context
+    # Get last year value
+    last_year = datetime.date.today().year - 1
+    tl_count = TransformerLevyPayments.objects.filter(resident=sel_resident,
+                                                      payment_date__lte=datetime.date(last_year, 1, 1)).__len__()
+    tl_count_ver = len(TransformerLevyPayments.objects.filter(resident=sel_resident, status=1,
+                                                              payment_date__lte=datetime.date(last_year, 1, 1)))
+    transformer_levy_payments = \
+        TransformerLevyPayments.objects.filter(resident=sel_resident,
+                                               payment_date__lte=datetime.date(last_year, 1, 1)).order_by('-id')
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(transformer_levy_payments, 10)
+    try:
+        payments = paginator.page(page)
+    except PageNotAnInteger:
+        payments = paginator.page(1)
+    except EmptyPage:
+        payments = paginator.page(paginator.num_pages)
+
+    context = {
+        'resident': sel_resident,
+        'count': tl_count,
+        'count_ver': tl_count_ver,
+        'payments': payments,
+    }
+
+    return render(request, 'financials/dashboards/res_tl_financials.html', context)
 
 
 class all_transformer_levy(ListView):

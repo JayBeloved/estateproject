@@ -102,7 +102,7 @@
     <div class="card-header">
       <h5>Transformer Levy Payments</h5>
       <div class="card-header-right">
-        <a href="" class="b-b-primary text-primary m-r-20">View All</a>
+        <a href="{% url 'financials:res_tl_payments' resident.id %}" class="b-b-primary text-primary m-r-20">View All</a>
         <button href="" type ="button" class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light"
                       data-bs-toggle="modal" data-bs-target="#tlModal">New Payment
         </button>
