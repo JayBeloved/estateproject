@@ -78,7 +78,7 @@
                     {% else %}
                     <td>Payment Verified</td>
                     {% endif %}
-                    <td><a href="{% url 'financials:financials_dashboard'  payment.resident|get_res_id %}"
+                    <td><a href="{% url 'financials:financials_dashboard'  payment.resident.id %}"
                            class="b-b-primary text-primary">View Dashboard</a></td>
                   </tr>
                     {% endfor %}
