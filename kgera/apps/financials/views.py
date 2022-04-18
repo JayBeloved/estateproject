@@ -189,7 +189,7 @@ def resident_sv_payments(request, resident_id):
     service_charge_payments = \
         ServiceChargePayments.objects.filter(resident=sel_resident).order_by('-id')
 
-    page = request.Get.get('page', 1)
+    page = request.GET.get('page', 1)
     paginator = Paginator(ServiceChargePayments, 10)
     try:
         payments = paginator.page(page)
@@ -237,7 +237,7 @@ def resident_sv_payments_month(request, resident_id):
                                              payment_date__year=datetime.date.today().year,
                                              payment_date__month=datetime.date.today().month).order_by('-id')
 
-    page = request.Get.get('page', 1)
+    page = request.GET.get('page', 1)
     paginator = Paginator(ServiceChargePayments, 10)
     try:
         payments = paginator.page(page)
@@ -282,7 +282,7 @@ def resident_sv_payments_year(request, resident_id):
         ServiceChargePayments.objects.filter(resident=sel_resident,
                                              payment_date__year=datetime.date.today().year).order_by('-id')
 
-    page = request.Get.get('page', 1)
+    page = request.GET.get('page', 1)
     paginator = Paginator(ServiceChargePayments, 10)
     try:
         payments = paginator.page(page)
@@ -329,7 +329,7 @@ def resident_sv_payments_lastyear(request, resident_id):
         ServiceChargePayments.objects.filter(resident=sel_resident,
                                              payment_date__year=last_year).order_by('-id')
 
-    page = request.Get.get('page', 1)
+    page = request.GET.get('page', 1)
     paginator = Paginator(ServiceChargePayments, 10)
     try:
         payments = paginator.page(page)
@@ -376,7 +376,7 @@ def resident_sv_payments_older(request, resident_id):
         ServiceChargePayments.objects.filter(resident=sel_resident,
                                              payment_date__year=datetime.date(last_year, 1, 1)).order_by('-id')
 
-    page = request.Get.get('page', 1)
+    page = request.GET.get('page', 1)
     paginator = Paginator(ServiceChargePayments, 10)
     try:
         payments = paginator.page(page)
