@@ -780,7 +780,7 @@ def check_transformer_levy(request):
 def sv_verification(request, payment_id):
     if payment_id is None:
         messages.error(request, 'No Payment Selected')
-        return HttpResponseRedirect(reverse("financials:res_sv_payments"))
+        return HttpResponseRedirect("financials:res_sv_payments")
     try:
         user = request.user
         if user.user_type == 1:
@@ -792,21 +792,21 @@ def sv_verification(request, payment_id):
                         sel_payment = ServiceChargePayments.objects.get(id=payment_id)
                     except ObjectDoesNotExist:
                         messages.error(request, 'Something Went Wrong')
-                        return HttpResponseRedirect(reverse('financials:res_sv_payments'))
+                        return HttpResponseRedirect('financials:res_sv_payments')
 
                     # Check Resident's Financial standing
                     try:
                         sel_resident = Residents.objects.get(resident_code=sel_payment.resident.resident_code)
                     except ObjectDoesNotExist:
                         messages.error(request, 'Something Went Wrong')
-                        return HttpResponseRedirect(reverse('financials:res_sv_payments'))
+                        return HttpResponseRedirect('financials:res_sv_payments')
 
                     try:
                         financial_standing = ResidentFinancialStanding.objects.get(resident=sel_resident.resident_code)
                     except ObjectDoesNotExist:
                         messages.error(request, 'Resident Financial Standing Yet To Updated \n'
                                                 'Resident Financial Dashboard Un-available.')
-                        return HttpResponseRedirect(reverse('financials:res_sv_payments'))
+                        return HttpResponseRedirect('financials:res_sv_payments')
 
                     # Deduct Payment from Financial standing
                     financial_standing.service_charge_outstanding = \
@@ -825,7 +825,7 @@ def sv_verification(request, payment_id):
                         sel_payment = ServiceChargePayments.objects.get(id=payment_id)
                     except ObjectDoesNotExist:
                         messages.error(request, 'Something Went Wrong')
-                        return HttpResponseRedirect(reverse('financials:res_sv_payments'))
+                        return HttpResponseRedirect('financials:res_sv_payments')
 
                     # Update Payment Status
                     sel_payment.status = 2
@@ -836,6 +836,6 @@ def sv_verification(request, payment_id):
             messages.error(request, 'You do not have clearance to perform this operation')
     except ObjectDoesNotExist:
         messages.error(request, 'Something Went Wrong')
-        return HttpResponseRedirect(reverse('financials:res_sv_payments'))
+        return HttpResponseRedirect('financials:res_sv_payments')
     messages.info(request, 'Something went wrong')
     return redirect('financials:res_sv_payments')
