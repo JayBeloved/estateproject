@@ -777,8 +777,8 @@ def check_transformer_levy(request):
 
 
 ##########################################################################################
-def sv_verification(request, payment_ref):
-    if payment_ref is None:
+def sv_verification(request, payment_id):
+    if payment_id is None:
         messages.error(request, 'No Payment Selected')
         return HttpResponseRedirect(reverse("financials:res_sv_payments"))
     try:
@@ -789,7 +789,7 @@ def sv_verification(request, payment_ref):
 
                 if request.POST.get('verify') == 'True':
                     try:
-                        sel_payment = ServiceChargePayments.objects.get(payment_ref=payment_ref)
+                        sel_payment = ServiceChargePayments.objects.get(id=payment_id)
                     except ObjectDoesNotExist:
                         messages.error(request, 'Something Went Wrong')
                         return HttpResponseRedirect(reverse('financials:res_sv_payments'))
@@ -822,7 +822,7 @@ def sv_verification(request, payment_ref):
 
                 elif request.POST.get('cancel') == 'True':
                     try:
-                        sel_payment = ServiceChargePayments.objects.get(payment_ref=payment_ref)
+                        sel_payment = ServiceChargePayments.objects.get(id=payment_id)
                     except ObjectDoesNotExist:
                         messages.error(request, 'Something Went Wrong')
                         return HttpResponseRedirect(reverse('financials:res_sv_payments'))
