@@ -71,7 +71,8 @@
                           <td>N {{ payment.amount }}</td>
                             {% if payment.status == 0 %}
                             <td>Verification Pending</td>
-                            <td><a href="" class="b-b-primary text-primary">Verify Payment</a></td>
+                            <td><button type="button"  class="b-b-primary text-primary" data-bs-toggle="modal"
+                                        data-bs-target="#consentModal{{ payment.id }}">Verify Payment</button></td>
                             {% elif payment.status == 1 %}
                             <td>Payment Verified</td>
                             <td><a href="" class="b-b-primary text-primary">View Receipt</a></td>
