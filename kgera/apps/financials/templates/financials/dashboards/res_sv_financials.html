@@ -98,7 +98,7 @@
                                       </h6>
                                       <row style="display: flex; justify-content:center">
                                         <div class="col-lg-12 col-xl-3">
-                                          <form action="{% url 'financials:sv_verification' payment.id %}" method="post" hidden='True'>
+                                          <form action="{% url 'financials:sv_verification' resident.id payment.id %}" method="post" hidden='True'>
                                             {% csrf_token %}
                                             <input type="hidden" readonly=True name="verify" value=True >
                                             <button class="btn btn-grd-primary btn-round waves-effect waves-light"
@@ -106,7 +106,7 @@
                                           </form>
                                         </div>
                                         <div class="col-lg-12 col-xl-3">
-                                          <form action="{% url 'financials:sv_verification' payment.id %}" method="post" hidden="True">
+                                          <form action="{% url 'financials:sv_verification' resident.id payment.id %}" method="post" hidden="True">
                                             {% csrf_token %}
                                             <input type="hidden" readonly=True name="cancel" value=True>
                                             <button type="button" class="btn btn-grd-info btn-round waves-effect waves-light"
