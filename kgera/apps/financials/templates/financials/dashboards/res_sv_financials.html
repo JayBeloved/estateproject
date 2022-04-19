@@ -81,12 +81,12 @@
                         </tr>
 
                       <!-- Modal -->
-                      <div class="modal fade" id="consentModal{{ payment.payment_ref }}" data-bs-backdrop="static" data-bs-keyboard="false"
-                           tabindex="-1" aria-labelledby="consentModal{{ payment.payment_ref }}Label" aria-hidden="true">
+                      <div class="modal fade" id="consentModal{{ payment.id }}" data-bs-backdrop="static" data-bs-keyboard="false"
+                           tabindex="-1" aria-labelledby="consentModal{{ payment.id }}Label" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                           <div class="modal-content">
                             <div class="modal-header">
-                              <h5 class="modal-title" id="consentModal{{ payment.payment_ref }}Label">Verify Service Charge Payment</h5>
+                              <h5 class="modal-title" id="consentModal{{ payment.id }}Label">Verify Service Charge Payment</h5>
                               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
@@ -98,7 +98,7 @@
                                       </h6>
                                       <row style="display: flex; justify-content:center">
                                         <div class="col-lg-12 col-xl-3">
-                                          <form action="{% url 'financials:sv_verification' payment.payment_ref %}" method="post" hidden='True'>
+                                          <form action="{% url 'financials:sv_verification' payment.id %}" method="post" hidden='True'>
                                             {% csrf_token %}
                                             <input type="hidden" readonly=True name="verify" value=True >
                                             <button class="btn btn-grd-primary btn-round waves-effect waves-light"
