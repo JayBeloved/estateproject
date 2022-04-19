@@ -165,6 +165,7 @@ def financials_dashboard(request, resident_id):
     return render(request, 'financials/dashboards/financials.html', context)
 
 
+##########################################################################################################
 def resident_sv_payments(request, resident_id):
     if resident_id is None:
         messages.error(request, 'No Resident Selected')
@@ -756,6 +757,7 @@ class all_transformer_levy(ListView):
             return queryset
 
 
+#####################################################################################
 def check_service_charge(request):
     sv_count = ServiceChargePayments.objects.all()
 
@@ -772,3 +774,68 @@ def check_transformer_levy(request):
         return render(request, 'financials/all/no_tl.html')
     else:
         return redirect('financials:all_transformer_levy')
+
+
+##########################################################################################
+def sv_verification(request, payment_ref):
+    if payment_ref is None:
+        messages.error(request, 'No Payment Selected')
+        return HttpResponseRedirect(reverse("financials:res_sv_payments"))
+    try:
+        user = request.user
+        if user.user_type == 1:
+
+            if request.method == 'POST':
+
+                if request.POST.get('verify') == 'True':
+                    try:
+                        sel_payment = ServiceChargePayments.objects.get(payment_ref=payment_ref)
+                    except ObjectDoesNotExist:
+                        messages.error(request, 'Something Went Wrong')
+                        return HttpResponseRedirect(reverse('financials:res_sv_payments'))
+
+                    # Check Resident's Financial standing
+                    try:
+                        sel_resident = Residents.objects.get(resident_code=sel_payment.resident.resident_code)
+                    except ObjectDoesNotExist:
+                        messages.error(request, 'Something Went Wrong')
+                        return HttpResponseRedirect(reverse('financials:res_sv_payments'))
+
+                    try:
+                        financial_standing = ResidentFinancialStanding.objects.get(resident=sel_resident.resident_code)
+                    except ObjectDoesNotExist:
+                        messages.error(request, 'Resident Financial Standing Yet To Updated \n'
+                                                'Resident Financial Dashboard Un-available.')
+                        return HttpResponseRedirect(reverse('financials:res_sv_payments'))
+
+                    # Deduct Payment from Financial standing
+                    financial_standing.service_charge_outstanding = \
+                        financial_standing.service_charge_outstanding - sel_payment.amount
+
+                    financial_standing.save()
+
+                    # Update Payment Status
+                    sel_payment.status = 1
+                    sel_payment.save()
+                    messages.success(request, 'Payment Verified Successfully')
+                    return redirect('financials:res_sv_payments')
+
+                elif request.POST.get('cancel') == 'True':
+                    try:
+                        sel_payment = ServiceChargePayments.objects.get(payment_ref=payment_ref)
+                    except ObjectDoesNotExist:
+                        messages.error(request, 'Something Went Wrong')
+                        return HttpResponseRedirect(reverse('financials:res_sv_payments'))
+
+                    # Update Payment Status
+                    sel_payment.status = 2
+                    sel_payment.save()
+                    messages.success(request, 'Payment set to Invalid')
+                    return redirect('financials:res_sv_payments')
+        else:
+            messages.error(request, 'You do not have clearance to perform this operation')
+    except ObjectDoesNotExist:
+        messages.error(request, 'Something Went Wrong')
+        return HttpResponseRedirect(reverse('financials:res_sv_payments'))
+    messages.info(request, 'Something went wrong')
+    return redirect('financials:res_sv_payments')

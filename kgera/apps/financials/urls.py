@@ -5,6 +5,7 @@ from .views import all_service_charge, all_transformer_levy
 urlpatterns = [
     path('financials/', include(([
         path('resident<int:resident_id>/dashboard/', views.financials_dashboard, name="financials_dashboard"),
+        path('sv/payments/<str:payment_ref/verify/', views.sv_verification, name="sv_verification"),
         path('resident<int:resident_id>/sv/payments/', views.resident_sv_payments, name="res_sv_payments"),
         path('resident<int:resident_id>/sv/payments/this_month/', views.resident_sv_payments_month,
              name="res_sv_payments_month"),

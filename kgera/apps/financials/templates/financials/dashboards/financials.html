@@ -138,9 +138,11 @@
                     <td>{{ payment.payment_ref }}</td>
                     <td>N {{ payment.amount }}</td>
                     {% if payment.status == 0 %}
-                    <td>Verification Pending <a href="" class="b-b-primary text-primary">Verify Payment</a></td>
+                    <td>Verification Pending</td>
+                    <td><a href="" class="b-b-primary text-primary">Verify Payment</a></td>
                     {% else %}
-                    <td>Payment Verified <a href="" class="b-b-primary text-primary">View Receipt</a></td>
+                    <td>Payment Verified</td>
+                    <td><a href="" class="b-b-primary text-primary">View Receipt</a></td>
                     {% endif %}
                   </tr>
                   {% endfor %}

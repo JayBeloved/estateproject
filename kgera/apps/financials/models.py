@@ -5,10 +5,12 @@ import datetime
 
 VERIFIED = 1
 UNVERIFIED = 0
+CANCELLED = 2
 
 PAY_STATUS = (
     (VERIFIED, 'Payment Verified'),
-    (UNVERIFIED, 'Verification Pending')
+    (UNVERIFIED, 'Verification Pending'),
+    (CANCELLED, 'Payment Not Valid'),
 )
 
 
