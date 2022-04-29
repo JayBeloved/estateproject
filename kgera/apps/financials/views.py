@@ -777,7 +777,7 @@ def check_transformer_levy(request):
 
 
 ##########################################################################################
-def sv_verification(request, resident_id, payment_id):
+def sv_payment_verification(request, resident_id, payment_id):
     if resident_id is None:
         messages.error(request, 'No Resident Selected')
         return HttpResponseRedirect(reverse("residents:all_service_charge"))
@@ -787,54 +787,42 @@ def sv_verification(request, resident_id, payment_id):
     try:
         user = request.user
         if user.user_type == 1:
+            try:
+                sel_payment = ServiceChargePayments.objects.get(id=payment_id)
+            except ObjectDoesNotExist:
+                messages.error(request, 'Something Went Wrong')
+                return HttpResponseRedirect('financials:res_sv_payments', resident_id)
 
-            if request.method == 'POST':
+            if sel_payment.status == 0:
 
-                if request.POST.get('verify') == 'True':
-                    try:
-                        sel_payment = ServiceChargePayments.objects.get(id=payment_id)
-                    except ObjectDoesNotExist:
-                        messages.error(request, 'Something Went Wrong')
-                        return HttpResponseRedirect('financials:res_sv_payments', resident_id)
+                # Check Resident's Financial standing
+                try:
+                    sel_resident = Residents.objects.get(resident_code=sel_payment.resident.resident_code)
+                except ObjectDoesNotExist:
+                    messages.error(request, 'Something Went Wrong')
+                    return HttpResponseRedirect('financials:res_sv_payments', resident_id)
 
-                    # Check Resident's Financial standing
-                    try:
-                        sel_resident = Residents.objects.get(resident_code=sel_payment.resident.resident_code)
-                    except ObjectDoesNotExist:
-                        messages.error(request, 'Something Went Wrong')
-                        return HttpResponseRedirect('financials:res_sv_payments', resident_id)
+                try:
+                    financial_standing = ResidentFinancialStanding.objects.get(resident=sel_resident.resident_code)
+                except ObjectDoesNotExist:
+                    messages.error(request, 'Resident Financial Standing Yet To Updated \n'
+                                            'Resident Financial Dashboard Un-available.')
+                    return HttpResponseRedirect('financials:res_sv_payments', resident_id)
 
-                    try:
-                        financial_standing = ResidentFinancialStanding.objects.get(resident=sel_resident.resident_code)
-                    except ObjectDoesNotExist:
-                        messages.error(request, 'Resident Financial Standing Yet To Updated \n'
-                                                'Resident Financial Dashboard Un-available.')
-                        return HttpResponseRedirect('financials:res_sv_payments', resident_id)
+                # Deduct Payment from Financial standing
+                financial_standing.service_charge_outstanding = \
+                    financial_standing.service_charge_outstanding - sel_payment.amount
 
-                    # Deduct Payment from Financial standing
-                    financial_standing.service_charge_outstanding = \
-                        financial_standing.service_charge_outstanding - sel_payment.amount
+                financial_standing.save()
 
-                    financial_standing.save()
-
-                    # Update Payment Status
-                    sel_payment.status = 1
-                    sel_payment.save()
-                    messages.success(request, 'Payment Verified Successfully')
-                    return redirect('financials:res_sv_payments', resident_id)
-
-                elif request.POST.get('cancel') == 'True':
-                    try:
-                        sel_payment = ServiceChargePayments.objects.get(id=payment_id)
-                    except ObjectDoesNotExist:
-                        messages.error(request, 'Something Went Wrong')
-                        return HttpResponseRedirect('financials:res_sv_payments', resident_id)
-
-                    # Update Payment Status
-                    sel_payment.status = 2
-                    sel_payment.save()
-                    messages.success(request, 'Payment set to Invalid')
-                    return redirect('financials:res_sv_payments', resident_id)
+                # Update Payment Status
+                sel_payment.status = 1
+                sel_payment.save()
+                messages.success(request, 'Payment Verified Successfully')
+                return redirect('financials:res_sv_payments', resident_id)
+            else:
+                messages.error(request, 'Payment Verification already done.')
+                return HttpResponseRedirect('financials:res_sv_payments', resident_id)
         else:
             messages.error(request, 'You do not have clearance to perform this operation')
             return HttpResponseRedirect('financials:res_sv_payments', resident_id)
@@ -843,3 +831,123 @@ def sv_verification(request, resident_id, payment_id):
         return HttpResponseRedirect('financials:res_sv_payments', resident_id)
 
 
+def sv_payment_cancellation(request, resident_id, payment_id):
+    if resident_id is None:
+        messages.error(request, 'No Resident Selected')
+        return HttpResponseRedirect(reverse("residents:all_service_charge"))
+    if payment_id is None:
+        messages.error(request, 'No Payment Selected')
+        return HttpResponseRedirect("financials:res_sv_payments", resident_id)
+    try:
+        user = request.user
+        if user.user_type == 1:
+            try:
+                sel_payment = ServiceChargePayments.objects.get(id=payment_id)
+            except ObjectDoesNotExist:
+                messages.error(request, 'Something Went Wrong')
+                return HttpResponseRedirect('financials:res_sv_payments', resident_id)
+            if sel_payment.status == 0:
+
+                # Update Payment Status
+                sel_payment.status = 2
+                sel_payment.save()
+                messages.success(request, 'Payment set to Invalid')
+                return redirect('financials:res_sv_payments', resident_id)
+            else:
+                messages.error(request, 'Payment Verification already done.')
+                return HttpResponseRedirect('financials:res_sv_payments', resident_id)
+        else:
+            messages.error(request, 'You do not have clearance to perform this operation')
+            return HttpResponseRedirect('financials:res_sv_payments', resident_id)
+    except ObjectDoesNotExist:
+        messages.error(request, 'Something Went Wrong')
+        return HttpResponseRedirect('financials:res_sv_payments', resident_id)
+
+
+##########################################################################################
+##########################################################################################
+def tl_payment_verification(request, resident_id, payment_id):
+    if resident_id is None:
+        messages.error(request, 'No Resident Selected')
+        return HttpResponseRedirect(reverse("residents:all_service_charge"))
+    if payment_id is None:
+        messages.error(request, 'No Payment Selected')
+        return HttpResponseRedirect("financials:res_tl_payments", resident_id)
+    try:
+        user = request.user
+        if user.user_type == 1:
+            try:
+                sel_payment = TransformerLevyPayments.objects.get(id=payment_id)
+            except ObjectDoesNotExist:
+                messages.error(request, 'Something Went Wrong')
+                return HttpResponseRedirect('financials:res_tl_payments', resident_id)
+
+            if sel_payment.status == 0:
+
+                # Check Resident's Financial standing
+                try:
+                    sel_resident = Residents.objects.get(resident_code=sel_payment.resident.resident_code)
+                except ObjectDoesNotExist:
+                    messages.error(request, 'Something Went Wrong')
+                    return HttpResponseRedirect('financials:res_tl_payments', resident_id)
+
+                try:
+                    financial_standing = ResidentFinancialStanding.objects.get(resident=sel_resident.resident_code)
+                except ObjectDoesNotExist:
+                    messages.error(request, 'Resident Financial Standing Yet To Updated \n'
+                                            'Resident Financial Dashboard Un-available.')
+                    return HttpResponseRedirect('financials:res_sv_payments', resident_id)
+
+                # Deduct Payment from Financial standing
+                financial_standing.transformer_levy_outstanding = \
+                    financial_standing.transformer_levy_outstanding - sel_payment.amount
+
+                financial_standing.save()
+
+                # Update Payment Status
+                sel_payment.status = 1
+                sel_payment.save()
+                messages.success(request, 'Payment Verified Successfully')
+                return redirect('financials:res_tl_payments', resident_id)
+            else:
+                messages.error(request, 'Payment Verification already done.')
+                return HttpResponseRedirect('financials:res_tl_payments', resident_id)
+        else:
+            messages.error(request, 'You do not have clearance to perform this operation')
+            return HttpResponseRedirect('financials:res_tl_payments', resident_id)
+    except ObjectDoesNotExist:
+        messages.error(request, 'Something Went Wrong')
+        return HttpResponseRedirect('financials:res_tl_payments', resident_id)
+
+
+def tl_payment_cancellation(request, resident_id, payment_id):
+    if resident_id is None:
+        messages.error(request, 'No Resident Selected')
+        return HttpResponseRedirect(reverse("residents:all_service_charge"))
+    if payment_id is None:
+        messages.error(request, 'No Payment Selected')
+        return HttpResponseRedirect("financials:res_tl_payments", resident_id)
+    try:
+        user = request.user
+        if user.user_type == 1:
+            try:
+                sel_payment = TransformerLevyPayments.objects.get(id=payment_id)
+            except ObjectDoesNotExist:
+                messages.error(request, 'Something Went Wrong')
+                return HttpResponseRedirect('financials:res_tl_payments', resident_id)
+            if sel_payment.status == 0:
+
+                # Update Payment Status
+                sel_payment.status = 2
+                sel_payment.save()
+                messages.success(request, 'Payment set to Invalid')
+                return redirect('financials:res_tl_payments', resident_id)
+            else:
+                messages.error(request, 'Payment Verification already done.')
+                return HttpResponseRedirect('financials:res_tl_payments', resident_id)
+        else:
+            messages.error(request, 'You do not have clearance to perform this operation')
+            return HttpResponseRedirect('financials:res_tl_payments', resident_id)
+    except ObjectDoesNotExist:
+        messages.error(request, 'Something Went Wrong')
+        return HttpResponseRedirect('financials:res_tl_payments', resident_id)

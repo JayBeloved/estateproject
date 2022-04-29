@@ -71,12 +71,56 @@
                           <td>N {{ payment.amount }}</td>
                           {% if payment.status == 0 %}
                           <td>Verification Pending</td>
-                          <td><a href="" class="b-b-primary text-primary">Verify Payment</a></td>
-                          {% else %}
+                          <td><button type="button"  class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#consentModal{{ payment.id }}">Verify Payment</button></td>
+                          {% elif payment.status == 1 %}
                           <td>Payment Verified</td>
-                          <td><a href="" class="b-b-primary text-primary">View Receipt</a></td>
+                          <td><a href="" class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light">
+                            View Receipt</a></td>
+                          {% else %}
+                          <td>Payment Not Valid</td>
                           {% endif %}
                         </tr>
+                        <!-- Modal -->
+                      <div class="modal fade" id="consentModal{{ payment.id }}" data-bs-backdrop="static" data-bs-keyboard="false"
+                           tabindex="-1" aria-labelledby="consentModal{{ payment.id }}Label" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="consentModal{{ payment.id }}Label">Verify Service Charge Payment</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="card">
+                                  <div class="card-block">
+                                    <div class="col-xl-12 col-md-12">
+                                      <h6 class="text-info text-center">
+                                        Verify Payment of N {{ payment.amount }} by {{ payment.resident.last_name }} {{ payment.resident.first_name }} ?
+                                      </h6>
+                                      <div class="row">
+                                        <div class="col-lg-12 col-xl-4">
+                                            <a href="{% url 'financials:tl_payment_verification' resident.id payment.id %}"
+                                               class="btn btn-grd-primary btn-round waves-effect waves-light">
+                                              Yes, Payment is Valid</a>
+                                        </div>
+                                        <div class="col-lg-12 col-xl-4">
+                                            <a href="{% url 'financials:tl_payment_cancellation' resident.id payment.id %}"
+                                               class="btn btn-grd-info btn-round waves-effect waves-light">
+                                              No, Payment is not Valid</a>
+                                        </div>
+                              `          <div class="col-lg-12 col-xl-4">
+                                          <button type="button" class="btn btn-grd-info btn-round waves-effect waves-light"
+                                                  data-bs-dismiss="modal">Cancel</button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                       {% endif %}
                     {% endfor %}
                 </tbody>

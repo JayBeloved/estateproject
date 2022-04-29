@@ -15,22 +15,22 @@
         <div class="card-block">
               <div class="row">
                 <div class="col-lg-12 col-xl-3">
-                  <a href="{% url 'financials:res_sv_payments_month' resident.id %}" type ="button" class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light">
+                  <a href="{% url 'financials:res_sv_payments_month' resident.id %}" type ="button" class="btn btn-grd-primary btn-lg btn-round waves-effect waves-light">
                      This Month
                   </a>
                 </div>
                 <div class="col-lg-12 col-xl-3">
-                  <a href="{% url 'financials:res_sv_payments_year' resident.id %}" type ="button" class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light">
+                  <a href="{% url 'financials:res_sv_payments_year' resident.id %}" type ="button" class="btn btn-grd-primary btn-lg btn-round waves-effect waves-light">
                      This Year
                   </a>
                 </div>
                 <div class="col-lg-12 col-xl-3">
-                  <a href="{% url 'financials:res_sv_payments_lastyear' resident.id %}" type ="button" class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light">
+                  <a href="{% url 'financials:res_sv_payments_lastyear' resident.id %}" type ="button" class="btn btn-grd-primary btn-lg btn-round waves-effect waves-light">
                      Last Year
                   </a>
                 </div>
                 <div class="col-lg-12 col-xl-3">
-                  <a href="{% url 'financials:res_sv_payments_older' resident.id %}" type ="button" class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light">
+                  <a href="{% url 'financials:res_sv_payments_older' resident.id %}" type ="button" class="btn btn-grd-primary btn-lg btn-round waves-effect waves-light">
                      Older
                   </a>
                 </div>
@@ -71,11 +71,13 @@
                           <td>N {{ payment.amount }}</td>
                             {% if payment.status == 0 %}
                             <td>Verification Pending</td>
-                            <td><button type="button"  class="b-b-primary text-primary" data-bs-toggle="modal"
+                            <td><button type="button"  class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light"
+                                        data-bs-toggle="modal"
                                         data-bs-target="#consentModal{{ payment.id }}">Verify Payment</button></td>
                             {% elif payment.status == 1 %}
                             <td>Payment Verified</td>
-                            <td><a href="" class="b-b-primary text-primary">View Receipt</a></td>
+                            <td><a href="" class="btn btn-grd-primary btn-sm btn-round waves-effect waves-light">
+                              View Receipt</a></td>
                             {% else %}
                             <td>Payment Not Valid</td>
                             {% endif %}
@@ -97,28 +99,22 @@
                                       <h6 class="text-info text-center">
                                         Verify Payment of N {{ payment.amount }} by {{ payment.resident.last_name }} {{ payment.resident.first_name }} ?
                                       </h6>
-                                      <row style="display: flex; justify-content:center">
+                                      <div class="row">
                                         <div class="col-lg-12 col-xl-3">
-                                          <form action="{% url 'financials:sv_verification' resident.id payment.id %}" method="post" hidden='True'>
-                                            {% csrf_token %}
-                                            <input type="hidden" readonly=True name="verify" value=True >
-                                            <button class="btn btn-grd-primary btn-round waves-effect waves-light"
-                                                  type="submit">Yes, Payment is Valid</button>
-                                          </form>
+                                            <a href="{% url 'financials:sv_payment_verification' resident.id payment.id %}"
+                                               class="btn btn-grd-primary btn-round waves-effect waves-light">
+                                              Yes, Payment is Valid</a>
                                         </div>
                                         <div class="col-lg-12 col-xl-3">
-                                          <form action="{% url 'financials:sv_verification' resident.id payment.id %}" method="post" hidden="True">
-                                            {% csrf_token %}
-                                            <input type="hidden" readonly=True name="cancel" value=True>
-                                            <button type="button" class="btn btn-grd-info btn-round waves-effect waves-light"
-                                                  type="submit">No, Payment is not Valid</button>
-                                          </form>
+                                            <a href="{% url 'financials:sv_payment_cancellation' resident.id payment.id %}"
+                                               class="btn btn-grd-info btn-round waves-effect waves-light">
+                                              No, Payment is not Valid</a>
                                         </div>
                               `          <div class="col-lg-12 col-xl-3">
                                           <button type="button" class="btn btn-grd-info btn-round waves-effect waves-light"
                                                   data-bs-dismiss="modal">Cancel</button>
                                         </div>
-                                      </row>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
