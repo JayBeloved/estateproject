@@ -18,7 +18,7 @@ SECRET_KEY = config(
 DEBUG = config("DEBUG", default=True, cast=bool)
 
 ALLOWED_HOSTS = config(
-    "ALLOWED_HOSTS", default="127.0.0.1,localhost", cast=Csv())
+    "ALLOWED_HOSTS", default="127.0.0.1,localhost, 127.0.0.1", cast=Csv())
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -44,7 +44,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ROOT_URLCONF = "kgera.urls"
 
-INTERNAL_IPS = ["127.0.0.1"]
+INTERNAL_IPS = ["127.0.0.1:800"]
 
 WSGI_APPLICATION = "kgera.wsgi.application"
 
@@ -93,7 +93,7 @@ TEMPLATES = [
 DATABASES = {
     "default": dj_database_url.config(
         default=config(
-            "DATABASE_URL", default="postgres://kgera:kgera@localhost:5432/kgera"),
+            "DATABASE_URL", default="mysql://kgera:kgera@localhost:3306/kgera"),
         conn_max_age=600,
     )
 }
