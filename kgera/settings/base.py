@@ -97,7 +97,7 @@ DATABASES = {
     'USER':'kgeraorg_kgeraorg', 
     'PASSWORD':'kabusa2021_',  
     'HOST':'kgera.org.ng', 
-    'PORT':'3306',
+    'PORT':'2083',
     'OPTIONS': {
                 'read_default_file': [BASE_DIR / 'settings/my.cnf'],
             },
