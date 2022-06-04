@@ -1,5 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/kgeraorg/app/
+    - export DEPLOYPATH=/home/kgeraorg/KgeraManager/
     - /bin/cp -R kgera $DEPLOYPATH
