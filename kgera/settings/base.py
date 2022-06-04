@@ -91,11 +91,17 @@ TEMPLATES = [
 # ==============================================================================
 
 DATABASES = {
-    "default": dj_database_url.config(
-        default=config(
-            "DATABASE_URL", default="mysql://kgera:kgera@localhost:3306/kgera"),
-        conn_max_age=600,
-    )
+    'default': {
+    'ENGINE': 'mysql.connector.django',
+    'NAME': 'kgeraorg_kgera', 
+    'USER':'kgera', 
+    'PASSWORD':'kabusa2021_',  
+    'HOST':'kgera.org.ng', 
+    'PORT':'2083'
+    'OPTIONS': {
+                'read_default_file': './my.cnf',
+            },
+    }
 }
 
 
