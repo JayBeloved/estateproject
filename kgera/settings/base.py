@@ -99,7 +99,7 @@ DATABASES = {
     'HOST':'kgera.org.ng', 
     'PORT':'2083',
     'OPTIONS': {
-                'read_default_file': './my.cnf',
+                'read_default_file': [BASE_DIR / 'settings/my.cnf'],
             },
     }
 }
