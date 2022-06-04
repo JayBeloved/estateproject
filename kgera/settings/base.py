@@ -94,7 +94,7 @@ DATABASES = {
     'default': {
     'ENGINE': 'mysql.connector.django',
     'NAME': 'kgeraorg_kgera', 
-    'USER':'kgeraorg_kgeraorg', 
+    'USER':'kgeraorg_kgera', 
     'PASSWORD':'kabusa2021_',  
     'HOST':'kgera.org.ng', 
     'PORT':'3306',
