@@ -7,7 +7,6 @@ from django.contrib.messages import constants as messages
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # ==============================================================================
 # CORE SETTINGS
 # ==============================================================================
@@ -44,10 +43,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ROOT_URLCONF = "kgera.urls"
 
-INTERNAL_IPS = ["127.0.0.1:800"]
+INTERNAL_IPS = ["127.0.0.1"]
 
 WSGI_APPLICATION = "kgera.wsgi.application"
-
 
 # ==============================================================================
 # MIDDLEWARE SETTINGS
@@ -63,7 +61,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
 
 # ==============================================================================
 # TEMPLATES SETTINGS
@@ -85,25 +82,20 @@ TEMPLATES = [
     },
 ]
 
-
 # ==============================================================================
 # DATABASES SETTINGS
 # ==============================================================================
 
 DATABASES = {
-    'default': {
-    'ENGINE': 'mysql.connector.django',
-    'NAME': 'kgeraorg_kgera', 
-    'USER':'kgeraorg_kgera', 
-    'PASSWORD':'kabusa2021_',  
-    'HOST':'kgera.org.ng', 
-    'PORT':'3306',
+    "default": dj_database_url.config(
+            default=config(
+                "DATABASE_URL", default="mysql://kgera:kgera@localhost:3306/kgera"),
+            conn_max_age=600,
+        ),
     'OPTIONS': {
-                'read_default_file': [BASE_DIR / 'settings/my.cnf'],
-            },
+            'read_default_file': [BASE_DIR / 'settings/my.cnf'],
     }
 }
-
 
 # ==============================================================================
 # AUTHENTICATION AND AUTHORIZATION SETTINGS
@@ -124,7 +116,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # ==============================================================================
 # I18N AND L10N SETTINGS
 # ==============================================================================
@@ -140,7 +131,6 @@ USE_L10N = True
 USE_TZ = True
 
 LOCALE_PATHS = [BASE_DIR / "locale"]
-
 
 # ==============================================================================
 # STATIC FILES SETTINGS
@@ -159,7 +149,6 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 )
 
-
 # ==============================================================================
 # MEDIA FILES SETTINGS
 # ==============================================================================
@@ -167,7 +156,6 @@ STATICFILES_FINDERS = (
 MEDIA_URL = "/media/"
 
 MEDIA_ROOT = BASE_DIR.parent.parent / "media"
-
 
 # ==============================================================================
 # THIRD-PARTY SETTINGS
