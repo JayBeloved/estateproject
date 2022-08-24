@@ -12,12 +12,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ==============================================================================
 
 SECRET_KEY = config(
-    "SECRET_KEY", default="django-insecure$kgera.settings.local")
+    "SECRET_KEY", default=".q4j\=f0_bp34u_!a\=r4fju3j*g0_55q76v9s5rl-e)r(+hr**ox")
 
 DEBUG = config("DEBUG", default=True, cast=bool)
 
 ALLOWED_HOSTS = config(
-    "ALLOWED_HOSTS", default="127.0.0.1,localhost, 127.0.0.1", cast=Csv())
+    "ALLOWED_HOSTS", default="app.kgera.org.ng,127.0.0.1,localhost", cast=Csv())
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -89,7 +89,7 @@ TEMPLATES = [
 DATABASES = {
     "default": dj_database_url.config(
             default=config(
-                "DATABASE_URL", default="mysql://kgera:kgera@localhost:3306/kgera"),
+                "DATABASE_URL", default="mysql://kgeraorg_kgera:Kabusa2021_@localhost:3306/kgeraorg_kgera"),
             conn_max_age=600,
         ),
     'OPTIONS': {
@@ -166,10 +166,10 @@ MEDIA_ROOT = BASE_DIR.parent.parent / "media"
 # FIRST-PARTY SETTINGS
 # ==============================================================================
 
-KGERA_ENVIRONMENT = config("KGERA_ENVIRONMENT", default="local")
-AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
-AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME")
+KGERA_ENVIRONMENT = config("KGERA_ENVIRONMENT", default="production")
+AWS_ACCESS_KEY_ID = "AKIA5SIULXHTQ6E2JVWT"
+AWS_SECRET_ACCESS_KEY = "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"
+AWS_STORAGE_BUCKET_NAME = "kgera-manager-files"
 AWS_S3_FILES_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 
