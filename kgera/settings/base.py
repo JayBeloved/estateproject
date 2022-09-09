@@ -90,10 +90,7 @@ DATABASES = {
             default=config(
                 "DATABASE_URL", default="mysql://kgera:kgera@localhost:3306/kgera"),
             conn_max_age=600,
-        ),
-    'OPTIONS': {
-            'read_default_file': [BASE_DIR / 'settings/my.cnf'],
-    }
+        )
 }
 
 # ==============================================================================
