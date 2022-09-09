@@ -1,31 +1,17 @@
 from pathlib import Path
 
 import dj_database_url
-import json
-from django.core.exceptions import ImproperlyConfigured
 from decouple import Csv, config
 
 from django.contrib.messages import constants as messages
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Gets secret key from secrets module
-with open('settings/secrets.json') as f:
-    secrets = json.loads(f.read())
-
-def get_secret(setting, secrets=secrets):
-    '''Get the secret variable or return explicit exception'''
-    try:
-        return secrets[setting]
-    except KeyError:
-        error_msg = 'Set the {0} environment.variable'.format(setting)
-    raise ImproperlyConfigured(error_msg)
-
-
 # ==============================================================================
 # CORE SETTINGS
 # ==============================================================================
-SECRET_KEY = get_secret('SECRET_KEY')
+SECRET_KEY = config(
+    "SECRET_KEY", default="django-insecure$kgera.settings.local")
 
 DEBUG = config("DEBUG", default=False, cast=bool)
 
@@ -99,14 +85,15 @@ TEMPLATES = [
 # DATABASES SETTINGS
 # ==============================================================================
 
-d_url = get_secret('DATABASE_URL')
-
 DATABASES = {
     "default": dj_database_url.config(
             default=config(
-                d_url, default="mysql://kgera:kgera@localhost:3306/kgera"),
+                "DATABASE_URL", default="mysql://kgera:kgera@localhost:3306/kgera"),
             conn_max_age=600,
         ),
+    'OPTIONS': {
+            'read_default_file': [BASE_DIR / 'settings/my.cnf'],
+    }
 }
 
 # ==============================================================================
@@ -178,10 +165,10 @@ MEDIA_ROOT = BASE_DIR.parent.parent / "media"
 # FIRST-PARTY SETTINGS
 # ==============================================================================
 
-KGERA_ENVIRONMENT = 'production'
-AWS_ACCESS_KEY_ID = get_secret('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = get_secret('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = get_secret('AWS_STORAGE_BUCKET_NAME')
+KGERA_ENVIRONMENT = config("KGERA_ENVIRONMENT", default="local")
+AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_FILES_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 
